@@ -1,0 +1,9 @@
+Diagnostics:
+  ClangTidy:
+    Add: [ performance-*, portability-*, modernize-* ]
+    CheckOptions:
+      readability-identifier-naming.VariableCase: CamelCase
+  UnusedIncludes: Strict
+  
+CompileFlags:
+  Add: [-Wall, -Wextra, -std=c++20]
