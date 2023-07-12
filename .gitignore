@@ -1,0 +1,4 @@
+*.out
+build/
+cmake-build*/
+*.gch
