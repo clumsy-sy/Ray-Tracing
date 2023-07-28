@@ -41,4 +41,20 @@ just build && time just run
 ## 图片展示
 
 ![Alt](images/balls_simple_400.bmp)
+![Alt](images/checker_balls_400.bmp)
+
+**上图信息**
+> 
+> CPU： i7-9750H （笔记本 6 核 12 逻辑处理器）
+> 
+> 图片大小：1200 * 800
+> 
+> 单像素采样数：1000
+>
+> 递归深度： 5 
+>
+> 运行时间：4:22.13
+
+
+
 ![Alt](images/all_20000.bmp)
