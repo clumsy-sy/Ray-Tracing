@@ -8,17 +8,17 @@
 
 **预编译 && 编译**
 ```sh
-just pre-build && just build
+make pre-build && make build
 ```
 
 **运行**
 ```sh
-just run [图片名]
+make run [图片名]
 ```
 
 推荐预编译后，编译运行并且记录运行时间（有些场景需要运行很久）
 ```sh
-just build && time just run
+make build && time make run
 ```
 
 ## 优化

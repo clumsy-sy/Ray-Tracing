@@ -40,13 +40,14 @@ auto triangle::hit(const ray &r, double t_min, double t_max, hit_record &rec) co
   auto s1 = cross(r.dir, e2);
   auto s2 = cross(s, e1);
   auto D = dot(s1, e1);
-  if(std::abs(D) < esp) return false;
+  if (std::abs(D) < esp)
+    return false;
   D = 1 / D;
   auto t = dot(s2, e2) * D;
   auto u = dot(s1, s) * D;
   auto v = dot(s2, r.dir) * D;
 
-  if (t < t_min || t > t_max || u < esp || v < esp || 1-u-v < esp)
+  if (t < t_min || t > t_max || u < esp || v < esp || 1 - u - v < esp)
     return false;
 
   rec.t = t;

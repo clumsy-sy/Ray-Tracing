@@ -13,7 +13,7 @@
 auto random_checkerANDballs() -> hittable_list {
   hittable_list world;
 
-  auto checker = std::make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
+  auto checker = std::make_shared<checker_texture>(color(0.01, 0.01, 0.01), color(0.99, 0.99, 0.99));
   world.add(std::make_shared<sphere>(point3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
 
   hittable_list box;

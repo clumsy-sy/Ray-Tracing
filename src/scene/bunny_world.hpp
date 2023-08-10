@@ -23,9 +23,8 @@ auto bunny_world() -> hittable_list {
   // objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
   // objects.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
 
-
   auto bunny = MeshTriangle("src/models/bunny/bunny.obj");
-  std::cout << "bunnt bounding box : " << bunny.box.minimum << "    ||    "  <<  bunny.box.maximum << std::endl;
+  std::cout << "bunnt bounding box : " << bunny.box.minimum << "    ||    " << bunny.box.maximum << std::endl;
   // MeshTriangle rotatebunny;
   // for(auto &now : bunny.triangles.objects) {
   //   rotatebunny.triangles.add(std::make_shared<rotate_y>(now, 180));

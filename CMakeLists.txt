@@ -16,3 +16,4 @@ add_executable(RayTracing src/main.cpp src/global.hpp ${CAMERA} ${EXTERNAL} ${GE
 target_compile_options(RayTracing PUBLIC -Wall -Wextra -pedantic -Wshadow -Wreturn-type -march=native)
 target_compile_features(RayTracing PUBLIC cxx_std_20)
 target_link_libraries(RayTracing PUBLIC)
+
