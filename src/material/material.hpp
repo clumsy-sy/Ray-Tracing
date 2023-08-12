@@ -5,7 +5,7 @@
 struct hit_record;
 
 /*
-  base class: attenuation(颜色衰减) 产生的 scattered（散射光）
+  base class: attenuation(颜色衰减) & scattered（散射光）& emited (光源发射)
 */
 class material {
 public:

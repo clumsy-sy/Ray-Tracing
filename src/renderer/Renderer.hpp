@@ -13,7 +13,7 @@ auto ray_color(const ray &r, const color &background, const hittable &world, int
 template <class Camera>
 class Renderer {
 public:
-  std::string photoname = "image.bmp";
+  std::string photoname = "Img.bmp";
   static_assert(std::is_base_of<camerabase, Camera>::value, "Camera not derived from camerabase");
   Camera cam;
   hittable_list world;
@@ -21,15 +21,13 @@ public:
   uint32_t image_width = 1200;
   uint32_t image_height = static_cast<uint32_t>(image_width / aspect_ratio);
   uint32_t samples_per_pixel = 64;   // 单素采样数
-  uint32_t max_depth = 50;           // 光线递归深度
+  uint32_t max_depth = 10;           // 光线递归深度
   uint32_t async_num = 36;           // 线程数
   color background = color(0, 0, 0); // 背景辐射
 
 public:
   Renderer() = default;
-  Renderer(hittable_list &hitlist) : world(hitlist) {
-    cam = Camera();
-  };
+  Renderer(hittable_list &hitlist) : world(hitlist), cam(){};
   Renderer(hittable_list &hitlist, double ratio, uint32_t width)
       : world(hitlist), aspect_ratio(ratio), image_width(width) {
     image_height = static_cast<uint32_t>(image_width / aspect_ratio);
@@ -57,9 +55,11 @@ public:
     std::vector<std::future<void>> deque;         // thread deque
     std::mutex cout_mutex;                        // lock the cnt and std::cout
     std::int32_t cnt = 0;
-    // 开始
+    // 开始渲染和显示进度
     UpdateProgress(cnt, image_height - 1);
-    // 各像素渲染
+    /*
+      各像素片渲染函数，
+    */
     auto action = [&](uint32_t jl, uint32_t jr) -> void {
       for (uint32_t j = jl; j < jr; ++j) {
         for (uint32_t i = 0; i < image_width; ++i) {
@@ -72,7 +72,9 @@ public:
         cout_mutex.unlock();
       }
     };
-    // 分块给各个线程任务
+    /*
+      线程任务划分：图像高度 / 线程数，计算完任务片后将线程启用并塞入队列
+    */
     uint32_t block = image_height / async_num;
     for (uint32_t ti = 0; ti != async_num; ++ti) {
       uint32_t jl = ti * block, jr = (ti + 1) * block;
@@ -84,7 +86,7 @@ public:
     for (auto &i : deque) {
       i.wait();
     }
-
+    // 图像生成
     photo.generate(photoname);
   }
   inline auto simple_random_sampling(uint32_t i, uint32_t j) -> color {
@@ -96,7 +98,6 @@ public:
       // res += ray_color(r, world, max_depth);
       res += ray_color(r, background, world, max_depth);
     }
-    // std::cout << "sample complete" << std::endl;
     return res;
   }
   inline auto sqrt_random_sampling(uint32_t i, uint32_t j) -> color {
@@ -132,13 +133,11 @@ auto ray_color(const ray &r, const hittable &world, int depth) -> color {
 }
 
 auto ray_color(const ray &r, const color &background, const hittable &world, int depth) -> color {
-  hit_record rec;
-
-  // If we've exceeded the ray bounce limit, no more light is gathered.
+  // 递归次数限制
   if (depth <= 0)
     return {0, 0, 0};
-
-  // If the ray hits nothing, return the background color.
+  hit_record rec;
+  // 如果光线什么都没有击中，则返回背景颜色
   if (!world.hit(r, 0.001, infinity, rec))
     return background;
 

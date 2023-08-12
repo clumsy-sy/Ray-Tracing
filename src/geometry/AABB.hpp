@@ -22,6 +22,9 @@ public:
   auto max() -> point3 const {
     return maximum;
   };
+  auto center() -> point3 const {
+    return {(minimum[0] + maximum[0]) / 2, (minimum[1] + maximum[1]) / 2, (minimum[2] + maximum[2]) / 2};
+  }
   // old version
   auto hit_old(const ray &r, double t_min, double t_max) -> bool {
     // 判断光线 与 AABB 是否相交，判断与三个面的交面，是否有重合

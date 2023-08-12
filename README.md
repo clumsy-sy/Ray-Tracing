@@ -40,6 +40,21 @@ make build && time make run
 
 ## 图片展示
 
+![Alt](images/zooTex.bmp)
+**上图信息**
+> 
+> CPU： i7-9750H （笔记本 6 核 12 逻辑处理器）
+> 
+> 图片大小：600 * 600
+> 
+> 单像素采样数：16000
+>
+> 递归深度： 5 
+>
+> 运行时间：51:11.18
+
+
+![Alt](images/zoo16384.bmp)
 ![Alt](images/balls_simple_400.bmp)
 ![Alt](images/checker_balls_400.bmp)
 
@@ -54,7 +69,5 @@ make build && time make run
 > 递归深度： 5 
 >
 > 运行时间：4:22.13
-
-
 
 ![Alt](images/all_20000.bmp)

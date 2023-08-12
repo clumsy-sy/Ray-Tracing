@@ -35,7 +35,7 @@ public:
   [[nodiscard]] auto value(double u, double v, const Vec3d &) const -> color override {
     // If we have no texture data, then return solid cyan as a debugging aid.
     if (data == nullptr)
-      return {0, 1, 1};
+      return {0, 0, 0};
 
     // Clamp input texture coordinates to [0,1] x [1,0]
     u = clamp(u, 0.0, 1.0);
@@ -52,7 +52,7 @@ public:
 
     const auto color_scale = 1.0 / 255.0;
     auto pixel = data + j * bytes_per_scanline + i * bytes_per_pixel;
-
+    // printf("color : %.5lf  %.5lf  %.5lf\n", color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]);
     return {color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]};
   }
 };

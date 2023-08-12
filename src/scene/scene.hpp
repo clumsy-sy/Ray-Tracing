@@ -9,12 +9,12 @@
 #include "simple_light.hpp"
 #include "test_scene.hpp"
 #include "total_texture.hpp"
-#include "bunny_world.hpp"
+#include "zoo.hpp"
 
 inline auto choose_scene(uint32_t opt, double &aspect_ratio, int &image_width, double &vfov, point3 &lookfrom,
     point3 &lookat, color &background) -> hittable_list {
-  lookfrom = point3(13, 2, 3);
-  // lookfrom = point3(4, 4, 20);
+  // lookfrom = point3(13, 2, 3);
+  lookfrom = point3(13, 3, 3);
   lookat = point3(0, 0, 0);
   background = color(0.70, 0.80, 1.00);
 
@@ -66,12 +66,28 @@ inline auto choose_scene(uint32_t opt, double &aspect_ratio, int &image_width, d
   case 9:
     aspect_ratio = (double)1280 / 960;
     image_width = 1280;
-    vfov = 90.0;
-    background = color(0.235294, 0.67451, 0.843137);
-    lookfrom = point3(-1, 5, -15);
-    lookat = point3(0, 4, 0);
+    vfov = 60.0;
+    background = color(0.0, 0.0, 0.0);
+    lookfrom = point3(-1, 5, 16);
+    lookat = point3(-1, 5, 0);
     return bunny_world();
   case 10:
+    aspect_ratio = (double)1280 / 960;
+    image_width = 1280;
+    vfov = 60.0;
+    background = color(0.0, 0.0, 0.0);
+    lookfrom = point3(-1, 5, 16);
+    lookat = point3(-1, 5, 0);
+    return cow_world();
+  case 11:
+    aspect_ratio = 1.0;
+    image_width = 600;
+    vfov = 40.0;
+    background = color(0, 0, 0);
+    lookfrom = point3(278, 278, -800);
+    lookat = point3(278, 278, 0);
+    return cornell_box_bunny_rotate();
+  case 12:
     aspect_ratio = 1.0;
     image_width = 600;
     vfov = 40.0;

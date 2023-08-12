@@ -79,6 +79,9 @@ public:
   friend auto operator*(const double &r, const Vec3d &v) -> Vec3d {
     return v * r;
   }
+  friend auto operator/(const Vec3d &v, const Vec3d &div) -> Vec3d {
+    return v.e / div.e;
+  }
   friend auto operator<<(std::ostream &os, const Vec3d &v) -> std::ostream & {
     return os << v.x() << ", " << v.y() << ", " << v.z();
   }
