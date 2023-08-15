@@ -2,7 +2,7 @@
 #define TRIANGLE_HPP
 
 #include "hittable.hpp"
-#include "translate.hpp"
+#include "interval.hpp"
 
 using pdd = std::pair<double, double>;
 
@@ -20,6 +20,7 @@ public:
   pdd t0, t1, t2;    // texture coords
   Vec3d normal;
   std::shared_ptr<material> mat_ptr;
+  aabb bbox;
 
 public:
   triangle() = default;
@@ -28,6 +29,7 @@ public:
     e1 = v1 - v0;
     e2 = v2 - v0;
     normal = unit_vector(cross(e1, e2));
+    bbox = getaabb();
   }
   triangle(std::array<Vec3d, 3> &vec, std::array<pdd, 3> &tex, std::shared_ptr<material> m) : mat_ptr(std::move(m)) {
     setVector(vec);
@@ -35,14 +37,21 @@ public:
     e1 = v1 - v0;
     e2 = v2 - v0;
     normal = unit_vector(cross(e1, e2));
+    bbox = getaabb();
   }
   auto setVector(std::array<Vec3d, 3> &vec) -> void;
   auto setTexture(std::array<pdd, 3> &tex) -> void;
   ~triangle() override = default;
   [[nodiscard]] inline auto getHitPoint(double u, double v) const -> point3;
   inline auto interpolate(double &u, double &v, Vec3d &Barycentr, double weight) const -> void;
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
-  auto bounding_box(aabb &output_box) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
+  [[nodiscard]] auto bounding_box() const -> aabb override;
+  inline auto getaabb() -> aabb {
+    auto ix = interval(std::min({v0[0], v1[0], v2[0]}), std::max({v0[0], v1[0], v2[0]}));
+    auto iy = interval(std::min({v0[1], v1[1], v2[1]}), std::max({v0[1], v1[1], v2[1]}));
+    auto iz = interval(std::min({v0[2], v1[2], v2[2]}), std::max({v0[2], v1[2], v2[2]}));
+    return {ix, iy, iz};
+  }
 
   friend auto operator<<(std::ostream &os, const triangle &t) -> std::ostream & {
     return os << "v0 : " << t.v0 << ", v1 " << t.v1 << ", v2 " << t.v2;
@@ -68,7 +77,7 @@ inline auto triangle::interpolate(double &u, double &v, Vec3d &Barycentr, double
 }
 
 // Möller Trumbore Algorithm 同时求 光线与三角形的交与 u，v
-auto triangle::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto triangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto s = r.orig - v0;
   auto s1 = cross(r.dir, e2);
   auto s2 = cross(s, e1);
@@ -80,23 +89,20 @@ auto triangle::hit(const ray &r, double t_min, double t_max, hit_record &rec) co
   auto u = dot(s1, s) * D;
   auto v = dot(s2, r.dir) * D;
 
-  if (t < t_min || t > t_max || u < esp || v < esp || 1 - u - v < esp)
+  if (t < ray_t.min || t > ray_t.max || u < esp || v < esp || 1 - u - v < esp)
     return false;
 
   rec.t = t;
   rec.p = r.at(t);
   rec.set_face_normal(r, normal);
   auto Barycentr = point3(1 - u - v, u, v);
-  // std::cout << Barycentr << "  =  " << Barycentr.sum3() << std::endl;
   interpolate(rec.u, rec.v, Barycentr, 1.0);
-  // if(u > 0 && u < 1 && v > 0 && v < 1)printf("%.3lf  %.3lf\n", rec.u, rec.v);
   rec.mat_ptr = mat_ptr;
   return true;
 }
 
-auto triangle::bounding_box(aabb &output_box) const -> bool {
-  output_box = surrounding_box(surrounding_box(v0, v1), v2);
-  return true;
+auto triangle::bounding_box() const -> aabb {
+  return bbox;
 }
 
 #endif

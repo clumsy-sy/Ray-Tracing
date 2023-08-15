@@ -2,6 +2,8 @@
 #define TRANSLATE_HPP
 
 #include "hittable.hpp"
+#include "interval.hpp"
+
 class translate : public hittable {
 public:
   std::shared_ptr<hittable> ptr;
@@ -10,14 +12,14 @@ public:
 public:
   translate(std::shared_ptr<hittable> p, Vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override;
+  [[nodiscard]] auto bounding_box() const -> aabb override;
 };
 
-auto translate::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto translate::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   ray moved_r(r.origin() - offset, r.direction());
-  if (!ptr->hit(moved_r, t_min, t_max, rec))
+  if (!ptr->hit(moved_r, ray_t, rec))
     return false;
 
   rec.p += offset;
@@ -26,13 +28,8 @@ auto translate::hit(const ray &r, double t_min, double t_max, hit_record &rec) c
   return true;
 }
 
-auto translate::bounding_box(aabb &output_box) const -> bool {
-  if (!ptr->bounding_box(output_box))
-    return false;
-
-  output_box = aabb(output_box.min() + offset, output_box.max() + offset);
-
-  return true;
+auto translate::bounding_box() const -> aabb {
+  return {ptr->bounding_box().min() + offset, ptr->bounding_box().max() + offset};
 }
 
 class scale : public hittable {
@@ -43,14 +40,14 @@ public:
 public:
   scale(std::shared_ptr<hittable> p, Vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override;
+  [[nodiscard]] auto bounding_box() const -> aabb override;
 };
 
-auto scale::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto scale::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   ray moved_r(r.origin() / vec, r.direction() / vec);
-  if (!ptr->hit(moved_r, t_min, t_max, rec))
+  if (!ptr->hit(moved_r, ray_t, rec))
     return false;
 
   rec.p = rec.p * vec;
@@ -59,13 +56,8 @@ auto scale::hit(const ray &r, double t_min, double t_max, hit_record &rec) const
   return true;
 }
 
-auto scale::bounding_box(aabb &output_box) const -> bool {
-  if (!ptr->bounding_box(output_box))
-    return false;
-
-  output_box = aabb(output_box.min() * vec, output_box.max() * vec);
-
-  return true;
+auto scale::bounding_box() const -> aabb {
+  return {ptr->bounding_box().min() * vec, ptr->bounding_box().max() * vec};
 }
 
 class rotate_y : public hittable {
@@ -73,17 +65,15 @@ public:
   std::shared_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
-  bool hasbox;
   aabb bbox;
 
 public:
   rotate_y(std::shared_ptr<hittable> p, double angle);
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
-    output_box = bbox;
-    return hasbox;
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return bbox;
   }
 };
 
@@ -91,7 +81,7 @@ rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
-  hasbox = ptr->bounding_box(bbox);
+  bbox = ptr->bounding_box();
 
   point3 min(infinity, infinity, infinity);
   point3 max(-infinity, -infinity, -infinity);
@@ -118,7 +108,7 @@ rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
   bbox = aabb(min, max);
 }
-auto rotate_y::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto origin = r.origin();
   auto direction = r.direction();
 
@@ -130,7 +120,7 @@ auto rotate_y::hit(const ray &r, double t_min, double t_max, hit_record &rec) co
 
   ray rotated_r(origin, direction);
 
-  if (!ptr->hit(rotated_r, t_min, t_max, rec))
+  if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
   auto p = rec.p;
@@ -153,17 +143,15 @@ public:
   std::shared_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
-  bool hasbox;
   aabb bbox;
 
 public:
   rotate_x(std::shared_ptr<hittable> p, double angle);
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
-    output_box = bbox;
-    return hasbox;
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return bbox;
   }
 };
 
@@ -171,7 +159,7 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
-  hasbox = ptr->bounding_box(bbox);
+  bbox = ptr->bounding_box();
 
   point3 min(infinity, infinity, infinity);
   point3 max(-infinity, -infinity, -infinity);
@@ -198,7 +186,7 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
   bbox = aabb(min, max);
 }
-auto rotate_x::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto rotate_x::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto origin = r.origin();
   auto direction = r.direction();
 
@@ -210,7 +198,7 @@ auto rotate_x::hit(const ray &r, double t_min, double t_max, hit_record &rec) co
 
   ray rotated_r(origin, direction);
 
-  if (!ptr->hit(rotated_r, t_min, t_max, rec))
+  if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
   auto p = rec.p;
@@ -233,17 +221,15 @@ public:
   std::shared_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
-  bool hasbox;
   aabb bbox;
 
 public:
   rotate_z(std::shared_ptr<hittable> p, double angle);
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
-    output_box = bbox;
-    return hasbox;
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return bbox;
   }
 };
 
@@ -251,7 +237,7 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
-  hasbox = ptr->bounding_box(bbox);
+  bbox = ptr->bounding_box();
 
   point3 min(infinity, infinity, infinity);
   point3 max(-infinity, -infinity, -infinity);
@@ -278,7 +264,7 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
   bbox = aabb(min, max);
 }
-auto rotate_z::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto rotate_z::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto origin = r.origin();
   auto direction = r.direction();
 
@@ -290,7 +276,7 @@ auto rotate_z::hit(const ray &r, double t_min, double t_max, hit_record &rec) co
 
   ray rotated_r(origin, direction);
 
-  if (!ptr->hit(rotated_r, t_min, t_max, rec))
+  if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
   auto p = rec.p;

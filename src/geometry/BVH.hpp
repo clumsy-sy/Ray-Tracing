@@ -3,6 +3,7 @@
 
 #include "../global.hpp"
 #include "hittablelist.hpp"
+#include "interval.hpp"
 
 inline auto box_compare(const std::shared_ptr<hittable> &a, const std::shared_ptr<hittable> &b, int axis) -> bool;
 inline auto box_x_compare(const std::shared_ptr<hittable> &a, const std::shared_ptr<hittable> &b) -> bool;
@@ -17,7 +18,7 @@ class bvh_node : public hittable {
 public:
   std::shared_ptr<hittable> left;
   std::shared_ptr<hittable> right;
-  aabb box;
+  aabb bbox;
 
 public:
   bvh_node();
@@ -26,8 +27,8 @@ public:
 
   bvh_node(const std::vector<std::shared_ptr<hittable>> &src_objects, size_t start, size_t end);
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
-  auto bounding_box(aabb &output_box) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
+  [[nodiscard]] auto bounding_box() const -> aabb override;
 };
 bvh_node::bvh_node(const std::vector<std::shared_ptr<hittable>> &src_objects, size_t start, size_t end) {
   auto objects = src_objects; // Create a modifiable array of the source scene objects
@@ -55,37 +56,26 @@ bvh_node::bvh_node(const std::vector<std::shared_ptr<hittable>> &src_objects, si
     right = make_shared<bvh_node>(objects, mid, end);
   }
 
-  aabb box_left, box_right;
-
-  if (!left->bounding_box(box_left) || !right->bounding_box(box_right))
-    std::cerr << "No bounding box in bvh_node constructor.\n";
-
-  box = surrounding_box(box_left, box_right);
+  bbox = surrounding_box(left->bounding_box(), right->bounding_box());
 }
 
-auto bvh_node::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
-  if (!box.hit(r, t_min, t_max))
+auto bvh_node::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
+  if (!bbox.hit(r, ray_t))
     return false;
   // 递归查找光线与 AABB 的交
-  bool hit_left = left->hit(r, t_min, t_max, rec);
-  bool hit_right = right->hit(r, t_min, hit_left ? rec.t : t_max, rec);
+  bool hit_left = left->hit(r, ray_t, rec);
+  bool hit_right = right->hit(r, interval(ray_t.min, hit_left ? rec.t : ray_t.max), rec);
 
   return hit_left || hit_right;
 }
 
-auto bvh_node::bounding_box(aabb &output_box) const -> bool {
-  output_box = box;
-  return true;
+auto bvh_node::bounding_box() const -> aabb {
+  return bbox;
 }
 
 // sort cmp
 inline auto box_compare(const std::shared_ptr<hittable> &a, const std::shared_ptr<hittable> &b, int axis) -> bool {
-  aabb box_a, box_b;
-  // 可优化，用空间换时间
-  if (!a->bounding_box(box_a) || !b->bounding_box(box_b))
-    std::cerr << "No bounding box in bvh_node constructor.\n";
-
-  return box_a.min().e[axis] < box_b.min().e[axis];
+  return a->bounding_box().axis[axis].min < b->bounding_box().axis[axis].min;
 }
 inline auto box_x_compare(const std::shared_ptr<hittable> &a, const std::shared_ptr<hittable> &b) -> bool {
   return box_compare(a, b, 0);

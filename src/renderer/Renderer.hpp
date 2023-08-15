@@ -120,7 +120,7 @@ auto ray_color(const ray &r, const hittable &world, int depth) -> color {
   if (depth <= 0)
     return {0, 0, 0};
   hit_record rec;
-  if (world.hit(r, 0.001, infinity, rec)) {
+  if (world.hit(r, interval(0.001, infinity), rec)) {
     ray scattered;
     color attenuation;
     if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
@@ -138,13 +138,13 @@ auto ray_color(const ray &r, const color &background, const hittable &world, int
     return {0, 0, 0};
   hit_record rec;
   // 如果光线什么都没有击中，则返回背景颜色
-  if (!world.hit(r, 0.001, infinity, rec))
+  if (!world.hit(r, interval(0.001, infinity), rec))
     return background;
 
   ray scattered;
   color attenuation;
   color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
-
+  // if(emitted[0] != 0 && emitted[1] != 0 && emitted[2] != 0)std::cout << emitted << std::endl;
   if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
     return emitted;
 

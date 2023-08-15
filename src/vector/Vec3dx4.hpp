@@ -182,6 +182,18 @@ auto random_in_unit_disk() -> Vec3d {
   }
 }
 
+inline auto random_cosine_direction() -> Vec3d {
+  auto r1 = random_double();
+  auto r2 = random_double();
+
+  auto phi = 2 * PI * r1;
+  auto x = cos(phi) * sqrt(r2);
+  auto y = sin(phi) * sqrt(r2);
+  auto z = sqrt(1 - r2);
+
+  return {x, y, z};
+}
+
 // 线性插值
 inline auto lerp(const Vec3d &a, const Vec3d &b, const float &t) -> Vec3d {
   return a * (1 - t) + b * t;

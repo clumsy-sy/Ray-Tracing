@@ -6,6 +6,7 @@
 #include "../material/material.hpp"
 #include "../material/isotropic.hpp"
 #include "../texture/texture.hpp"
+#include "interval.hpp"
 
 class constant_medium : public hittable {
 public:
@@ -20,33 +21,33 @@ public:
   constant_medium(std::shared_ptr<hittable> b, double d, color c)
       : boundary(std::move(b)), phase_function(std::make_shared<isotropic>(c)), neg_inv_density(-1 / d) {}
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
-    return boundary->bounding_box(output_box);
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return boundary->bounding_box();
   }
 };
 
-auto constant_medium::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   // Print occasional samples when debugging. To enable, set enableDebug true.
   const bool enableDebug = false;
   const bool debugging = enableDebug && random_double() < 0.00001;
 
   hit_record rec1, rec2;
 
-  if (!boundary->hit(r, -infinity, infinity, rec1))
+  if (!boundary->hit(r, empty, rec1))
     return false;
 
-  if (!boundary->hit(r, rec1.t + 0.0001, infinity, rec2))
+  if (!boundary->hit(r, interval(rec1.t + 0.0001, infinity), rec2))
     return false;
 
   if (debugging)
-    std::cerr << "\nt_min=" << rec1.t << ", t_max=" << rec2.t << '\n';
+    std::cerr << "\nray_t.min=" << rec1.t << ", ray_t.max=" << rec2.t << '\n';
 
-  if (rec1.t < t_min)
-    rec1.t = t_min;
-  if (rec2.t > t_max)
-    rec2.t = t_max;
+  if (rec1.t < ray_t.min)
+    rec1.t = ray_t.min;
+  if (rec2.t > ray_t.max)
+    rec2.t = ray_t.max;
 
   if (rec1.t >= rec2.t)
     return false;

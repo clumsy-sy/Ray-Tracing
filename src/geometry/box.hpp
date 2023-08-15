@@ -3,6 +3,7 @@
 
 #include "aarect.hpp"
 #include "hittablelist.hpp"
+#include "interval.hpp"
 
 class box : public hittable {
 public:
@@ -14,11 +15,10 @@ public:
   box() = default;
   box(const point3 &p0, const point3 &p1, std::shared_ptr<material> ptr);
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
-    output_box = aabb(box_min, box_max);
-    return true;
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return {box_min, box_max};
   }
 };
 
@@ -36,8 +36,8 @@ box::box(const point3 &p0, const point3 &p1, std::shared_ptr<material> ptr) {
   sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p0.x(), ptr));
 }
 
-auto box::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
-  return sides.hit(r, t_min, t_max, rec);
+auto box::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
+  return sides.hit(r, ray_t, rec);
 }
 
 #endif

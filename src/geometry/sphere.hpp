@@ -10,6 +10,7 @@ public:
   point3 center;
   double radius, radius2;
   std::shared_ptr<material> mat_ptr;
+  aabb bbox;
 
 private:
   static void get_sphere_uv(const point3 &p, double &u, double &v) {
@@ -29,13 +30,16 @@ private:
 public:
   sphere() = default;
   sphere(point3 c, double r, std::shared_ptr<material> m)
-      : center(std::move(c)), radius(r), radius2(r * r), mat_ptr(std::move(m)){};
+      : center(std::move(c)), radius(r), radius2(r * r), mat_ptr(std::move(m)) {
+    // 圆的 AABB 就是(圆心 - r)三个方向 和 （圆心 + r）三个方向
+    bbox = aabb(center - Vec3d(radius, radius, radius), center + Vec3d(radius, radius, radius));
+  };
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
-  auto bounding_box(aabb &output_box) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
+  [[nodiscard]] auto bounding_box() const -> aabb override;
 };
 
-auto sphere::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto sphere::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   Vec3d oc = r.origin() - center;
   auto a = r.direction().length_squared();
   auto half_b = dot(oc, r.direction());
@@ -43,15 +47,14 @@ auto sphere::hit(const ray &r, double t_min, double t_max, hit_record &rec) cons
   // Find the nearest root that lies in the acceptable range.
   double x0, x1, root;
   if (solveQuadratic_halfb(a, half_b, c, x0, x1)) {
-    if (x0 > t_min && x0 < t_max)
+    if (ray_t.surrounds(x0))
       root = x0;
-    else if (x1 > t_min && x1 < t_max)
+    else if (ray_t.surrounds(x1))
       root = x1;
     else
       return false;
   } else
     return false;
-
   rec.t = root;
   rec.p = r.at(rec.t);
   Vec3d &&outward_normal = (rec.p - center) / radius;
@@ -62,10 +65,8 @@ auto sphere::hit(const ray &r, double t_min, double t_max, hit_record &rec) cons
   return true;
 }
 
-auto sphere::bounding_box(aabb &output_box) const -> bool {
-  // 圆的 AABB 就是(圆心 - r)三个方向 和 （圆心 + r）三个方向
-  output_box = aabb(center - Vec3d(radius, radius, radius), center + Vec3d(radius, radius, radius));
-  return true;
+auto sphere::bounding_box() const -> aabb {
+  return bbox;
 }
 
 #endif

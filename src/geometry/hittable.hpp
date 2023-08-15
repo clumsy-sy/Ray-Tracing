@@ -3,6 +3,7 @@
 
 #include "../vector/Vec3dx4.hpp"
 #include "AABB.hpp"
+#include "interval.hpp"
 #include "ray.hpp"
 
 class material;
@@ -25,8 +26,8 @@ struct hit_record {
 
 class hittable {
 public:
-  virtual auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool = 0;
-  virtual auto bounding_box(aabb &output_box) const -> bool = 0;
+  virtual auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool = 0;
+  [[nodiscard]] virtual auto bounding_box() const -> aabb = 0;
   virtual ~hittable() = default;
 };
 

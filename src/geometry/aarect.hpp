@@ -2,6 +2,7 @@
 #define AARECT_HPP
 
 #include "hittable.hpp"
+#include "interval.hpp"
 // 在 xy 屏幕上的矩形，z 固定
 class xy_rect : public hittable {
 public:
@@ -14,19 +15,18 @@ public:
   xy_rect(double _x0, double _x1, double _y0, double _y1, double _k, std::shared_ptr<material> mat)
       : mp(std::move(mat)), x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k){};
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
+  [[nodiscard]] auto bounding_box() const -> aabb override {
     // The bounding box must have non-zero width in each dimension, so pad the Z
     // dimension a small amount.
-    output_box = aabb(point3(x0, y0, k - 0.0001), point3(x1, y1, k + 0.0001));
-    return true;
+    return {point3(x0, y0, k - 0.0001), point3(x1, y1, k + 0.0001)};
   }
 };
 
-auto xy_rect::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto t = (k - r.origin().z()) / r.direction().z();
-  if (t < t_min || t > t_max)
+  if (ray_t.outside(t))
     return false;
   auto x = r.origin().x() + t * r.direction().x();
   auto y = r.origin().y() + t * r.direction().y();
@@ -53,19 +53,18 @@ public:
   xz_rect(double _x0, double _x1, double _z0, double _z1, double _k, std::shared_ptr<material> mat)
       : mp(std::move(mat)), x0(_x0), x1(_x1), z0(_z0), z1(_z1), k(_k){};
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
+  [[nodiscard]] auto bounding_box() const -> aabb override {
     // The bounding box must have non-zero width in each dimension, so pad the Y
     // dimension a small amount.
-    output_box = aabb(point3(x0, k - 0.0001, z0), point3(x1, k + 0.0001, z1));
-    return true;
+    return {point3(x0, k - 0.0001, z0), point3(x1, k + 0.0001, z1)};
   }
 };
 
-auto xz_rect::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto t = (k - r.origin().y()) / r.direction().y();
-  if (t < t_min || t > t_max)
+  if (ray_t.outside(t))
     return false;
   auto x = r.origin().x() + t * r.direction().x();
   auto z = r.origin().z() + t * r.direction().z();
@@ -92,19 +91,18 @@ public:
   yz_rect(double _y0, double _y1, double _z0, double _z1, double _k, std::shared_ptr<material> mat)
       : mp(std::move(mat)), y0(_y0), y1(_y1), z0(_z0), z1(_z1), k(_k){};
 
-  auto hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool override;
+  auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
-  auto bounding_box(aabb &output_box) const -> bool override {
+  [[nodiscard]] auto bounding_box() const -> aabb override {
     // The bounding box must have non-zero width in each dimension, so pad the X
     // dimension a small amount.
-    output_box = aabb(point3(k - 0.0001, y0, z0), point3(k + 0.0001, y1, z1));
-    return true;
+    return {point3(k - 0.0001, y0, z0), point3(k + 0.0001, y1, z1)};
   }
 };
 
-auto yz_rect::hit(const ray &r, double t_min, double t_max, hit_record &rec) const -> bool {
+auto yz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   auto t = (k - r.origin().x()) / r.direction().x();
-  if (t < t_min || t > t_max)
+  if (ray_t.outside(t))
     return false;
   auto y = r.origin().y() + t * r.direction().y();
   auto z = r.origin().z() + t * r.direction().z();

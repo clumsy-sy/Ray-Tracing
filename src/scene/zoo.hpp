@@ -28,11 +28,11 @@ auto bunny_world() -> hittable_list {
   objects.add(std::make_shared<xy_rect>(-10, 10, -10, 10, -6, white));   // back
 
   auto bunny = MeshTriangle("src/models/bunny/bunny.obj", 60.0f);
-  std::cout << "bunny bounding box : " << bunny.box.minimum << "    ||    " << bunny.box.maximum << std::endl;
+  std::cout << "bunny bounding box : " << bunny.bbox.min() << "    ||    " << bunny.bbox.max() << std::endl;
 
   auto bunnybox = std::make_shared<bvh_node>(bunny.triangles);
   auto box = std::make_shared<translate>(
-      std::make_shared<scale>(bunnybox, Vec3d(1, 1, 1)), Vec3d(0, -bunny.box.minimum.y(), 0));
+      std::make_shared<scale>(bunnybox, Vec3d(1, 1, 1)), Vec3d(0, -bunny.bbox.min().y(), 0));
   objects.add(box);
   return objects;
 }
@@ -57,17 +57,13 @@ auto cow_world() -> hittable_list {
   auto cow_surface = std::make_shared<lambertian>(cow_texture);
   auto cow = MeshTriangle("src/models/spot/spot_triangulated_good.obj", 4, cow_surface);
   // auto cow = MeshTriangle("src/models/spot/spot_triangulated_good.obj", 4);
-  std::cout << "cow bounding box : " << cow.box.minimum << "    ||    " << cow.box.maximum << std::endl;
+  std::cout << "cow bounding box : " << cow.bbox.min() << "    ||    " << cow.bbox.max() << std::endl;
   auto cowbox = std::make_shared<bvh_node>(cow.triangles);
   auto rotatecow = std::make_shared<rotate_y>(cowbox, 150);
-  aabb cowab;
-  if (rotatecow->bounding_box(cowab)) {
-    std::cout << cowab.center() << std::endl;
-    auto box = std::make_shared<translate>(rotatecow, Vec3d(0, -cowab.minimum[1], 2));
-    objects.add(box);
-  } else {
-    std::cout << "ERROR in bunny bounding box!" << std::endl;
-  }
+  aabb cowab = rotatecow->bounding_box();
+  std::cout << cowab.center() << std::endl;
+  auto box = std::make_shared<translate>(rotatecow, Vec3d(0, -cowab.min()[1], 2));
+  objects.add(box);
 
   return objects;
 }
@@ -98,35 +94,27 @@ auto cornell_box_bunny_rotate() -> hittable_list {
   objects.add(box2);
 
   auto bunny = MeshTriangle("src/models/bunny/bunny.obj", 60.0f);
-  std::cout << "bunny bounding box : " << bunny.box.minimum << "    ||    " << bunny.box.maximum << std::endl;
+  std::cout << "bunny bounding box : " << bunny.bbox.min() << "    ||    " << bunny.bbox.max() << std::endl;
   auto bunnybox = std::make_shared<bvh_node>(bunny.triangles);
   auto rotatebunny = std::make_shared<rotate_y>(bunnybox, 180);
   auto bigbunny = std::make_shared<scale>(rotatebunny, Vec3d(15, 15, 15));
-  aabb bunnyaabb;
-  if (bigbunny->bounding_box(bunnyaabb)) {
-    auto center = bunnyaabb.center();
+  aabb bunnyaabb = bigbunny->bounding_box();
+  auto center = bunnyaabb.center();
 
-    auto box = std::make_shared<translate>(bigbunny, Vec3d(330 + center[0], 300, 400));
-    objects.add(box);
-  } else {
-    std::cout << "ERROR in bunny bounding box!" << std::endl;
-  }
+  auto box = std::make_shared<translate>(bigbunny, Vec3d(330 + center[0], 300, 400));
+  objects.add(box);
 
   auto cow_texture = std::make_shared<image_texture>("src/models/spot/spot_texture.png");
   auto cow_surface = std::make_shared<lambertian>(cow_texture);
   auto cow = MeshTriangle("src/models/spot/spot_triangulated_good.obj", 80, cow_surface);
   // auto cow = MeshTriangle("src/models/spot/spot_triangulated_good.obj", 4);
-  std::cout << "cow bounding box : " << cow.box.minimum << "    ||    " << cow.box.maximum << std::endl;
+  std::cout << "cow bounding box : " << cow.bbox.min() << "    ||    " << cow.bbox.max() << std::endl;
   auto cowbox = std::make_shared<bvh_node>(cow.triangles);
   auto rotatecow = std::make_shared<rotate_y>(cowbox, 45);
-  aabb cowab;
-  if (rotatecow->bounding_box(cowab)) {
-    // std::cout << cowab.center() << std::endl;
-    auto box = std::make_shared<translate>(rotatecow, Vec3d(165, 165 - cowab.minimum[1], 145));
-    objects.add(box);
-  } else {
-    std::cout << "ERROR in bunny bounding box!" << std::endl;
-  }
+  aabb cowab = rotatecow->bounding_box();
+
+  auto boxcow = std::make_shared<translate>(rotatecow, Vec3d(165, 165 - cowab.min()[1], 145));
+  objects.add(boxcow);
 
   return objects;
 }
