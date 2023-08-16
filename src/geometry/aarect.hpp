@@ -22,6 +22,15 @@ public:
     // dimension a small amount.
     return {point3(x0, y0, k - 0.0001), point3(x1, y1, k + 0.0001)};
   }
+  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+    auto random_point = point3(random_double(x0, x1)(), k, random_double(y0, y1)());
+    return random_point - origin;
+  }
+  friend auto operator<<(std::ostream &os, const xy_rect &m) -> std::ostream & {
+    os << "[xy_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  y0 - y1 : " << m.y0 << " ~ " << m.y1 << " z : " << m.k
+       << "\n";
+    return os;
+  }
 };
 
 auto xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
@@ -60,6 +69,15 @@ public:
     // dimension a small amount.
     return {point3(x0, k - 0.0001, z0), point3(x1, k + 0.0001, z1)};
   }
+  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+    auto random_point = point3(random_double(x0, x1)(), k, random_double(z0, z1)());
+    return random_point - origin;
+  }
+  friend auto operator<<(std::ostream &os, const xz_rect &m) -> std::ostream & {
+    os << "[xz_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  z0 - z1 : " << m.z0 << " ~ " << m.z1 << " y : " << m.k
+       << "\n";
+    return os;
+  }
 };
 
 auto xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
@@ -97,6 +115,15 @@ public:
     // The bounding box must have non-zero width in each dimension, so pad the X
     // dimension a small amount.
     return {point3(k - 0.0001, y0, z0), point3(k + 0.0001, y1, z1)};
+  }
+  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+    auto random_point = point3(random_double(y0, y1)(), k, random_double(z0, z1)());
+    return random_point - origin;
+  }
+  friend auto operator<<(std::ostream &os, const yz_rect &m) -> std::ostream & {
+    os << "[yz_rect]| y0 - y1 : " << m.y0 << " ~ " << m.y1 << "  z0 - z1 : " << m.z0 << " ~ " << m.z1 << " x : " << m.k
+       << "\n";
+    return os;
   }
 };
 

@@ -13,11 +13,15 @@ public:
   diffuse_light(std::shared_ptr<texture> a) : emit(std::move(a)) {}
   diffuse_light(color c) : emit(std::make_shared<solid_color>(c)) {}
 
-  auto scatter(const ray &, const hit_record &, color &, ray &) const -> bool override {
+  auto scatter([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,
+      [[maybe_unused]] scatter_record &srec) const -> bool override {
     return false;
   }
 
-  [[nodiscard]] auto emitted(double u, double v, const point3 &p) const -> color override {
+  [[nodiscard]] auto emitted([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec, double u,
+      double v, [[maybe_unused]] const point3 &p) const -> color override {
+    if (!rec.front_face)
+      return {0, 0, 0};
     return emit->value(u, v, p);
   }
 };

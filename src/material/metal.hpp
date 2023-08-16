@@ -16,11 +16,13 @@ public:
   }
   metal(color a, double f) : albedo(std::move(a)), fuzz(f < 1 ? f : 1) {}
 
-  auto scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const -> bool override {
+  auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
+    srec.attenuation = albedo;
+    srec.pdf_ptr = nullptr;
+    srec.skip_pdf = true;
     Vec3d reflected = reflect(unit_vector(r_in.direction()), rec.normal);
-    scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
-    attenuation = albedo;
-    return (dot(scattered.direction(), rec.normal) > 0);
+    srec.skip_pdf_ray = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
+    return true;
   }
 };
 

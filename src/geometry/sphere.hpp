@@ -2,6 +2,7 @@
 #define SPHERE_H
 
 #include "../global.hpp"
+#include "ONB.hpp"
 #include "hittable.hpp"
 
 class sphere : public hittable {
@@ -37,6 +38,31 @@ public:
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
+
+  [[nodiscard]] auto pdf_value(const point3 &o, const Vec3d &v) const -> double override {
+    // This method only works for stationary spheres.
+
+    hit_record rec;
+    if (!this->hit(ray(o, v), interval(0.001, infinity), rec))
+      return 0;
+
+    auto cos_theta_max = sqrt(1 - radius * radius / (center - o).length_squared());
+    auto solid_angle = 2 * PI * (1 - cos_theta_max);
+
+    return 1 / solid_angle;
+  }
+
+  [[nodiscard]] auto random(const point3 &o) const -> Vec3d override {
+    Vec3d direction = center - o;
+    auto distance_squared = direction.length_squared();
+    onb uvw;
+    uvw.build_from_w(direction);
+    return uvw.local(random_to_sphere(radius, distance_squared));
+  }
+  friend auto operator<<(std::ostream &os, const sphere &m) -> std::ostream & {
+    os << "[Sphere]| center : " << m.center << " radius :" << m.radius << "\n";
+    return os;
+  }
 };
 
 auto sphere::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {

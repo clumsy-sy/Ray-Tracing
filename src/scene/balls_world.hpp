@@ -9,12 +9,14 @@
 #include "../geometry/sphere.hpp"
 #include "../geometry/BVH.hpp"
 
-auto random_balls_world() -> hittable_list {
-  hittable_list world;
+auto random_balls_world(hittable_list &world, [[maybe_unused]] hittable_list &light) -> void {
 
   auto ground_material = std::make_shared<lambertian>(color(0.5, 0.5, 0.5));
   world.add(std::make_shared<sphere>(point3(0, -2000, 0), 2000, ground_material));
   hittable_list box;
+
+  // auto material2 = std::make_shared<lambertian>(color(0.4, 0.2, 0.1));
+  // box.add(std::make_shared<sphere>(point3(0, 1, 0), 1.0, material2));
   for (int a = -11; a < 11; a++) {
     for (int b = -11; b < 11; b++) {
       auto choose_mat = random_double();
@@ -42,7 +44,6 @@ auto random_balls_world() -> hittable_list {
       }
     }
   }
-
   world.add(std::make_shared<bvh_node>(box));
 
   auto material1 = std::make_shared<dielectric>(1.5);
@@ -53,8 +54,6 @@ auto random_balls_world() -> hittable_list {
 
   auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
   world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
-
-  return world;
 }
 
 #endif

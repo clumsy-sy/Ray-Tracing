@@ -25,6 +25,28 @@ public:
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
+
+  [[nodiscard]] auto pdf_value(const point3 &o, const Vec3d &v) const -> double override {
+    auto weight = 1.0 / objects.size();
+    auto sum = 0.0;
+
+    for (const auto &object : objects)
+      sum += weight * object->pdf_value(o, v);
+
+    return sum;
+  }
+
+  [[nodiscard]] auto random(const Vec3d &o) const -> Vec3d override {
+    auto int_size = static_cast<int>(objects.size());
+    return objects[(uint32_t)random_int(0, int_size - 1)()]->random(o);
+  }
+  friend auto operator<<(std::ostream &os, const hittable_list &m) -> std::ostream & {
+    os << "hittable_list : " << m.objects.size() << "\n";
+    for (auto const &t : m.objects) {
+      os << t.get();
+    }
+    return os;
+  }
 };
 
 auto hittable_list::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {

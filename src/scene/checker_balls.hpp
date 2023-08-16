@@ -10,8 +10,7 @@
 #include "../geometry/BVH.hpp"
 #include "../texture/checker_texture.hpp"
 
-auto random_checkerANDballs() -> hittable_list {
-  hittable_list world;
+void random_checkerANDballs(hittable_list &world, [[maybe_unused]] hittable_list &light) {
 
   auto checker = std::make_shared<checker_texture>(color(0.01, 0.01, 0.01), color(0.99, 0.99, 0.99));
   world.add(std::make_shared<sphere>(point3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
@@ -55,8 +54,6 @@ auto random_checkerANDballs() -> hittable_list {
 
   auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
   world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
-
-  return world;
 }
 
 #endif

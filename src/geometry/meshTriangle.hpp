@@ -41,7 +41,6 @@ public:
         auto tex = std::make_pair(mesh.Vertices[i + j].TextureCoordinate.X, mesh.Vertices[i + j].TextureCoordinate.Y);
         face_vertices[j] = vert;
         texture[j] = tex;
-
       }
       triangles.add(std::make_shared<triangle>(face_vertices, texture, mat_ptr));
     }

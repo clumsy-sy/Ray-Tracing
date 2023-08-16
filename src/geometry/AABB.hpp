@@ -114,4 +114,12 @@ inline auto surrounding_box(const aabb &box0, const aabb &box1) -> aabb {
     interval(box0.z(), box1.z())
   };
 }
+
+auto operator+(const aabb& bbox, const Vec3d& offset) -> aabb {
+    return {bbox.x() + offset.x(), bbox.y() + offset.y(), bbox.z() + offset.z()};
+}
+
+auto operator+(const Vec3d& offset, const aabb& bbox) -> aabb {
+    return bbox + offset;
+}
 #endif

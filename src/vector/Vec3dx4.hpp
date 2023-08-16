@@ -3,8 +3,11 @@
 
 #include "../global.hpp"
 #include "../external/simd.hpp"
+#include <cassert>
+#include <ostream>
 /*
-  向量
+  向量|点|颜色 {x, y, z, w}
+  simd<double, 4> e
 */
 class Vec3d {
 public:
@@ -45,45 +48,56 @@ public:
   [[nodiscard]] auto z() const -> double {
     return e[2];
   }
+  // 求和 x + y + z
   [[nodiscard]] auto sum3() const -> double {
     return x() + y() + z();
   }
-  // 对应位置相乘 x * x, y * y, z * z
+  // 乘 r {x * r, y * r, z * r}
   auto operator*(const double &r) const -> Vec3d {
     return e * r;
   }
-  // 对应位置相除 x / x, y / y, z / z
+  // 除 r {x / r, y / r, z / r}
   auto operator/(const double &r) const -> Vec3d {
     return e / r;
   }
+  // vec * vec 对应位置想乘 {x * x, y * y, z * z}
   auto operator*(const Vec3d &v) const -> Vec3d {
     return e * v.e;
   }
+  // 对应位置相减
   auto operator-(const Vec3d &v) const -> Vec3d {
     return e - v.e;
   }
+  // 对应位置相加
   auto operator+(const Vec3d &v) const -> Vec3d {
     return e + v.e;
   }
+  // 对应位置相加
   auto operator+=(const Vec3d &v) -> Vec3d & {
     e += v.e;
     return *this;
   }
+  // 乘 r {x * r, y * r, z * r}
   auto operator*=(const double &r) -> Vec3d & {
     e *= r;
     return *this;
   }
+  // 除 r {x / r, y / r, z / r}
   auto operator/=(const double &r) -> Vec3d & {
     return *this *= 1 / r;
   }
+  //  r * vec {x * r, y * r, z * r}
   friend auto operator*(const double &r, const Vec3d &v) -> Vec3d {
     return v * r;
   }
+  //  vec / r {x * r, y * r, z * r}
   friend auto operator/(const Vec3d &v, const Vec3d &div) -> Vec3d {
     return v.e / div.e;
   }
+  // 输出{x, y, z}
   friend auto operator<<(std::ostream &os, const Vec3d &v) -> std::ostream & {
-    return os << v.x() << ", " << v.y() << ", " << v.z();
+    return os << "[x] = " << std::setw(6) << v.x() << ", [y] = " << std::setw(6) << v.y() << ", [z] = " << std::setw(6)
+              << v.z();
   }
   // 模的平方
   [[nodiscard]] auto length_squared() const -> double {
@@ -93,21 +107,23 @@ public:
   [[nodiscard]] auto length() const -> double {
     return std::sqrt(length_squared());
   }
-  // 随机 (x, y, z) \in (0, 1.0)
+  // 随机vec (x, y, z) \in (0, 1.0)
   inline static auto random() -> Vec3d {
     return {random_double(), random_double(), random_double()};
   }
-  // 随机 (x, y, z) \in (min, max)
+  // 随机vec (x, y, z) \in (min, max)
   inline static auto random(double min, double max) -> Vec3d {
     auto fun = random_double(min, max);
     return {fun(), fun(), fun()};
   }
   // 是否为 0 向量
-  [[nodiscard]] auto near_zero() const -> bool {
+  [[nodiscard]] inline auto near_zero() const -> bool {
+    // 方法 1
     return (std::fabs(x()) < esp) && (std::fabs(y()) < esp) && (std::fabs(z()) < esp);
+    // 方法 2
     // return length_squared() < esp3;
   }
-  // x, y, z 开方
+  // {x, y, z} 开方
   inline auto sqrt() -> Vec3d & {
     auto res = std::sqrt(e);
     this->e = res.r;
@@ -147,7 +163,7 @@ inline auto refract(const Vec3d &uv, const Vec3d &n, double etai_over_etat) -> V
 }
 
 // 随机生成一个在单位圆内的点
-inline auto random_in_unit_sphere() -> Vec3d {
+auto random_in_unit_sphere() -> Vec3d {
   while (true) {
     auto p = Vec3d::random(-1, 1);
     if (p.length_squared() >= 1)
@@ -181,7 +197,7 @@ auto random_in_unit_disk() -> Vec3d {
     return p;
   }
 }
-
+//
 inline auto random_cosine_direction() -> Vec3d {
   auto r1 = random_double();
   auto r2 = random_double();
@@ -190,6 +206,18 @@ inline auto random_cosine_direction() -> Vec3d {
   auto x = cos(phi) * sqrt(r2);
   auto y = sin(phi) * sqrt(r2);
   auto z = sqrt(1 - r2);
+
+  return {x, y, z};
+}
+//
+inline auto random_to_sphere(double radius, double distance_squared) -> Vec3d {
+  auto r1 = random_double();
+  auto r2 = random_double();
+  auto z = 1 + r2 * (sqrt(1 - radius * radius / distance_squared) - 1);
+
+  auto phi = 2 * PI * r1;
+  auto x = cos(phi) * sqrt(1 - z * z);
+  auto y = sin(phi) * sqrt(1 - z * z);
 
   return {x, y, z};
 }

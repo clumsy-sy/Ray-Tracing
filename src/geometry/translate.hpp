@@ -29,7 +29,7 @@ auto translate::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool
 }
 
 auto translate::bounding_box() const -> aabb {
-  return {ptr->bounding_box().min() + offset, ptr->bounding_box().max() + offset};
+  return ptr->bounding_box().min() + offset;
 }
 
 class scale : public hittable {
@@ -171,8 +171,8 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
         auto y = j * bbox.max().y() + (1 - j) * bbox.min().y();
         auto z = k * bbox.max().z() + (1 - k) * bbox.min().z();
 
-        auto newy = cos_theta * y + sin_theta * z;
-        auto newz = -sin_theta * y + cos_theta * z;
+        auto newy = cos_theta * y - sin_theta * z;
+        auto newz = sin_theta * y + cos_theta * z;
 
         Vec3d tester(x, newy, newz);
 
@@ -249,8 +249,8 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
         auto y = j * bbox.max().y() + (1 - j) * bbox.min().y();
         auto z = k * bbox.max().z() + (1 - k) * bbox.min().z();
 
+        auto newx = cos_theta * x - sin_theta * y;
         auto newy = cos_theta * y + sin_theta * x;
-        auto newx = -sin_theta * y + cos_theta * x;
 
         Vec3d tester(newx, newy, z);
 
