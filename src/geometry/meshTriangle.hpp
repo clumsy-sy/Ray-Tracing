@@ -32,11 +32,11 @@ public:
     auto mesh = loader.LoadedMeshes[0];
     std::cout << mesh.Vertices.size() / 3 << std::endl;
     for (uint32_t i = 0; i < mesh.Vertices.size(); i += 3) {
-      std::array<Vec3d, 3> face_vertices;
+      std::array<vec3d, 3> face_vertices;
       std::array<pdd, 3> texture;
       for (int j = 0; j < 3; j++) {
         auto vert =
-            Vec3d(mesh.Vertices[i + j].Position.X, mesh.Vertices[i + j].Position.Y, mesh.Vertices[i + j].Position.Z) *
+            vec3d(mesh.Vertices[i + j].Position.X, mesh.Vertices[i + j].Position.Y, mesh.Vertices[i + j].Position.Z) *
             scale;
         auto tex = std::make_pair(mesh.Vertices[i + j].TextureCoordinate.X, mesh.Vertices[i + j].TextureCoordinate.Y);
         face_vertices[j] = vert;

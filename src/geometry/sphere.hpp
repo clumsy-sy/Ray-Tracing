@@ -33,13 +33,13 @@ public:
   sphere(point3 c, double r, std::shared_ptr<material> m)
       : center(std::move(c)), radius(r), radius2(r * r), mat_ptr(std::move(m)) {
     // 圆的 AABB 就是(圆心 - r)三个方向 和 （圆心 + r）三个方向
-    bbox = aabb(center - Vec3d(radius, radius, radius), center + Vec3d(radius, radius, radius));
+    bbox = aabb(center - vec3d(radius, radius, radius), center + vec3d(radius, radius, radius));
   };
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
 
-  [[nodiscard]] auto pdf_value(const point3 &o, const Vec3d &v) const -> double override {
+  [[nodiscard]] auto pdf_value(const point3 &o, const vec3d &v) const -> double override {
     // This method only works for stationary spheres.
 
     hit_record rec;
@@ -52,8 +52,8 @@ public:
     return 1 / solid_angle;
   }
 
-  [[nodiscard]] auto random(const point3 &o) const -> Vec3d override {
-    Vec3d direction = center - o;
+  [[nodiscard]] auto random(const point3 &o) const -> vec3d override {
+    vec3d direction = center - o;
     auto distance_squared = direction.length_squared();
     onb uvw;
     uvw.build_from_w(direction);
@@ -66,7 +66,7 @@ public:
 };
 
 auto sphere::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  Vec3d oc = r.origin() - center;
+  vec3d oc = r.origin() - center;
   auto a = r.direction().length_squared();
   auto half_b = dot(oc, r.direction());
   auto c = oc.length_squared() - radius2;
@@ -83,7 +83,7 @@ auto sphere::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
     return false;
   rec.t = root;
   rec.p = r.at(rec.t);
-  Vec3d &&outward_normal = (rec.p - center) / radius;
+  vec3d &&outward_normal = (rec.p - center) / radius;
   rec.set_face_normal(r, outward_normal);
   get_sphere_uv(outward_normal, rec.u, rec.v);
   rec.mat_ptr = mat_ptr;

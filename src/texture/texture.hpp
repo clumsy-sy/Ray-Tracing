@@ -1,7 +1,7 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 
 class texture {
 public:

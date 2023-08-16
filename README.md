@@ -8,7 +8,8 @@
 
 **预编译 && 编译**
 ```sh
-make pre-build && make build
+# 预编译支持多线程编译 -j[线程数]
+make pre-build -j8 && make build 
 ```
 
 **运行**
@@ -29,7 +30,7 @@ make build && time make run
 
 ### SIMD!!!
 
-并发编程非常适合这个项目，因为这个项目中大量运用了 `{double,double,double}` 的向量类型，对于两个向量之间的操作，可以通过 simd 一个指令完成，极大提升效率。代码详见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/src/vector/Vec3dx4.hpp#L11C1-L11C1)
+并发编程非常适合这个项目，因为这个项目中大量运用了 `{double,double,double}` 的向量类型，对于两个向量之间的操作，可以通过 simd 一个指令完成，极大提升效率。代码详见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/src/vector/vec3dx4.h#L11C1-L11C1)
 
 *注意： `-march=native` 的编译指令会自动进行一部分 simd 优化*
 

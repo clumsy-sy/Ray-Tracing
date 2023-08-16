@@ -22,9 +22,9 @@ auto test_scene(hittable_list &world, hittable_list &light) -> void {
   world.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
 
   auto mat_ptr = std::make_shared<lambertian>(color(.12, .45, .15));
-  auto v0 = Vec3d(1, 100, 100);
-  auto v1 = Vec3d(1, 450, 100);
-  auto v2 = Vec3d(1, 450, 450);
+  auto v0 = vec3d(1, 100, 100);
+  auto v1 = vec3d(1, 450, 100);
+  auto v2 = vec3d(1, 450, 450);
   world.add(std::make_shared<triangle>(v0, v1, v2, mat_ptr));
 }
 

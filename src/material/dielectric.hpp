@@ -2,7 +2,7 @@
 #define DIELECTRIC_HPP
 
 #include "material.hpp"
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 #include "../geometry/hittable.hpp"
 
 class dielectric : public material {
@@ -18,12 +18,12 @@ public:
     srec.skip_pdf = true;
     double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
-    Vec3d unit_direction = unit_vector(r_in.direction());
+    vec3d unit_direction = unit_vector(r_in.direction());
     double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
     double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
     bool cannot_refract = refraction_ratio * sin_theta > 1.0;
-    Vec3d direction;
+    vec3d direction;
 
     if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_double())
       direction = reflect(unit_direction, rec.normal);

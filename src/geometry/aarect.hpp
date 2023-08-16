@@ -22,7 +22,7 @@ public:
     // dimension a small amount.
     return {point3(x0, y0, k - 0.0001), point3(x1, y1, k + 0.0001)};
   }
-  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+  [[nodiscard]] auto random(const point3 &origin) const -> vec3d override {
     auto random_point = point3(random_double(x0, x1)(), k, random_double(y0, y1)());
     return random_point - origin;
   }
@@ -44,7 +44,7 @@ auto xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.u = (x - x0) / (x1 - x0);
   rec.v = (y - y0) / (y1 - y0);
   rec.t = t;
-  auto outward_normal = Vec3d(0, 0, 1);
+  auto outward_normal = vec3d(0, 0, 1);
   rec.set_face_normal(r, outward_normal);
   rec.mat_ptr = mp;
   rec.p = r.at(t);
@@ -69,7 +69,7 @@ public:
     // dimension a small amount.
     return {point3(x0, k - 0.0001, z0), point3(x1, k + 0.0001, z1)};
   }
-  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+  [[nodiscard]] auto random(const point3 &origin) const -> vec3d override {
     auto random_point = point3(random_double(x0, x1)(), k, random_double(z0, z1)());
     return random_point - origin;
   }
@@ -91,7 +91,7 @@ auto xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.u = (x - x0) / (x1 - x0);
   rec.v = (z - z0) / (z1 - z0);
   rec.t = t;
-  auto outward_normal = Vec3d(0, 1, 0);
+  auto outward_normal = vec3d(0, 1, 0);
   rec.set_face_normal(r, outward_normal);
   rec.mat_ptr = mp;
   rec.p = r.at(t);
@@ -116,7 +116,7 @@ public:
     // dimension a small amount.
     return {point3(k - 0.0001, y0, z0), point3(k + 0.0001, y1, z1)};
   }
-  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+  [[nodiscard]] auto random(const point3 &origin) const -> vec3d override {
     auto random_point = point3(random_double(y0, y1)(), k, random_double(z0, z1)());
     return random_point - origin;
   }
@@ -138,7 +138,7 @@ auto yz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.u = (y - y0) / (y1 - y0);
   rec.v = (z - z0) / (z1 - z0);
   rec.t = t;
-  auto outward_normal = Vec3d(1, 0, 0);
+  auto outward_normal = vec3d(1, 0, 0);
   rec.set_face_normal(r, outward_normal);
   rec.mat_ptr = mp;
   rec.p = r.at(t);

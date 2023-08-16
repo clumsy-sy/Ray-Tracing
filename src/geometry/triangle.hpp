@@ -16,9 +16,9 @@ public:
     4. 三个点的法向量信息（Vector3f）
   */
   point3 v0, v1, v2; // vertices A, B ,C , counter-clockwise order
-  Vec3d e1, e2;      // 2 edges v1-v0, v2-v0; 求光线交有用
+  vec3d e1, e2;      // 2 edges v1-v0, v2-v0; 求光线交有用
   pdd t0, t1, t2;    // texture coords
-  Vec3d normal;
+  vec3d normal;
   std::shared_ptr<material> mat_ptr;
   aabb bbox;
 
@@ -31,7 +31,7 @@ public:
     normal = unit_vector(cross(e1, e2));
     bbox = getaabb();
   }
-  triangle(std::array<Vec3d, 3> &vec, std::array<pdd, 3> &tex, std::shared_ptr<material> m) : mat_ptr(std::move(m)) {
+  triangle(std::array<vec3d, 3> &vec, std::array<pdd, 3> &tex, std::shared_ptr<material> m) : mat_ptr(std::move(m)) {
     setVector(vec);
     setTexture(tex);
     e1 = v1 - v0;
@@ -39,11 +39,11 @@ public:
     normal = unit_vector(cross(e1, e2));
     bbox = getaabb();
   }
-  auto setVector(std::array<Vec3d, 3> &vec) -> void;
+  auto setVector(std::array<vec3d, 3> &vec) -> void;
   auto setTexture(std::array<pdd, 3> &tex) -> void;
   ~triangle() override = default;
   [[nodiscard]] inline auto getHitPoint(double u, double v) const -> point3;
-  inline auto interpolate(double &u, double &v, Vec3d &Barycentr, double weight) const -> void;
+  inline auto interpolate(double &u, double &v, vec3d &Barycentr, double weight) const -> void;
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
   inline auto getaabb() -> aabb {
@@ -57,7 +57,7 @@ public:
     return os << "v0 : " << t.v0 << ", v1 " << t.v1 << ", v2 " << t.v2;
   }
 };
-auto triangle::setVector(std::array<Vec3d, 3> &vec) -> void {
+auto triangle::setVector(std::array<vec3d, 3> &vec) -> void {
   v0 = vec[0], v1 = vec[1], v2 = vec[2];
 }
 auto triangle::setTexture(std::array<pdd, 3> &tex) -> void {
@@ -67,7 +67,7 @@ inline auto triangle::getHitPoint(double u, double v) const -> point3 {
   return (1 - u - v) * v0 + u * v1 + v * v2;
 }
 
-inline auto triangle::interpolate(double &u, double &v, Vec3d &Barycentr, double weight) const -> void {
+inline auto triangle::interpolate(double &u, double &v, vec3d &Barycentr, double weight) const -> void {
   u = (Barycentr[0] * t0.first + Barycentr[1] * t1.first + Barycentr[2] * t2.first);
   v = (Barycentr[0] * t0.second + Barycentr[1] * t1.second + Barycentr[2] * t2.second);
   if (weight != 1.0) {

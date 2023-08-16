@@ -7,10 +7,10 @@
 class translate : public hittable {
 public:
   std::shared_ptr<hittable> ptr;
-  Vec3d offset;
+  vec3d offset;
 
 public:
-  translate(std::shared_ptr<hittable> p, Vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
+  translate(std::shared_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -35,10 +35,10 @@ auto translate::bounding_box() const -> aabb {
 class scale : public hittable {
 public:
   std::shared_ptr<hittable> ptr;
-  Vec3d vec;
+  vec3d vec;
 
 public:
-  scale(std::shared_ptr<hittable> p, Vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
+  scale(std::shared_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -96,7 +96,7 @@ rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
         auto newx = cos_theta * x + sin_theta * z;
         auto newz = -sin_theta * x + cos_theta * z;
 
-        Vec3d tester(newx, y, newz);
+        vec3d tester(newx, y, newz);
 
         for (int c = 0; c < 3; c++) {
           min[c] = std::min(min[c], tester[c]);
@@ -174,7 +174,7 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
         auto newy = cos_theta * y - sin_theta * z;
         auto newz = sin_theta * y + cos_theta * z;
 
-        Vec3d tester(x, newy, newz);
+        vec3d tester(x, newy, newz);
 
         for (int c = 0; c < 3; c++) {
           min[c] = std::min(min[c], tester[c]);
@@ -252,7 +252,7 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
         auto newx = cos_theta * x - sin_theta * y;
         auto newy = cos_theta * y + sin_theta * x;
 
-        Vec3d tester(newx, newy, z);
+        vec3d tester(newx, newy, z);
 
         for (int c = 0; c < 3; c++) {
           min[c] = std::min(min[c], tester[c]);

@@ -2,7 +2,7 @@
 #define METAL_HPP
 
 #include "material.hpp"
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 #include "../geometry/hittable.hpp"
 
 class metal : public material {
@@ -20,7 +20,7 @@ public:
     srec.attenuation = albedo;
     srec.pdf_ptr = nullptr;
     srec.skip_pdf = true;
-    Vec3d reflected = reflect(unit_vector(r_in.direction()), rec.normal);
+    vec3d reflected = reflect(unit_vector(r_in.direction()), rec.normal);
     srec.skip_pdf_ray = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
     return true;
   }

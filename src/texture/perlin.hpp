@@ -2,12 +2,12 @@
 #define PERLIN_HPP
 
 #include "../global.hpp"
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 
 class perlin {
 private:
   static const int point_count = 256;
-  Vec3d *ranvec;
+  vec3d *ranvec;
   int *perm_x, *perm_y, *perm_z;
 
   static auto perlin_generate_perm() -> int * {
@@ -36,7 +36,7 @@ private:
 
     return accum;
   }
-  static auto perlin_interp(std::array<std::array<std::array<Vec3d, 2>, 2>, 2> c, double u, double v, double w)
+  static auto perlin_interp(std::array<std::array<std::array<vec3d, 2>, 2>, 2> c, double u, double v, double w)
       -> double {
     auto uu = u * u * (3 - 2 * u);
     auto vv = v * v * (3 - 2 * v);
@@ -46,7 +46,7 @@ private:
     for (int i = 0; i < 2; i++)
       for (int j = 0; j < 2; j++)
         for (int k = 0; k < 2; k++) {
-          Vec3d weight_v(u - i, v - j, w - k);
+          vec3d weight_v(u - i, v - j, w - k);
           accum += (i * uu + (1 - i) * (1 - uu)) * (j * vv + (1 - j) * (1 - vv)) * (k * ww + (1 - k) * (1 - ww)) *
                    dot(c[i][j][k], weight_v);
         }
@@ -56,9 +56,9 @@ private:
 
 public:
   perlin() {
-    ranvec = new Vec3d[point_count];
+    ranvec = new vec3d[point_count];
     for (int i = 0; i < point_count; ++i) {
-      ranvec[i] = unit_vector(Vec3d::random(-1, 1));
+      ranvec[i] = unit_vector(vec3d::random(-1, 1));
     }
 
     perm_x = perlin_generate_perm();
@@ -82,7 +82,7 @@ public:
     auto j = static_cast<int>(floor(p.y()));
     auto k = static_cast<int>(floor(p.z()));
 
-    std::array<std::array<std::array<Vec3d, 2>, 2>, 2> c;
+    std::array<std::array<std::array<vec3d, 2>, 2>, 2> c;
 
     for (int di = 0; di < 2; di++)
       for (int dj = 0; dj < 2; dj++)

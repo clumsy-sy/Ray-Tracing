@@ -1,6 +1,7 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
+#include "../external/rtw_stb_image_write.h"
 #include "../global.hpp"
 #include "../external/BMP.hpp"
 #include "../camera/camerabase.hpp"
@@ -50,7 +51,7 @@ public:
         for (uint32_t i = 0; i < image_width; ++i) {
           color pixel_color = simple_random_sampling(i, j);
           // color pixel_color = sqrt_random_sampling(i, j);
-          photo.set(i, j, pixel_color, samples_per_pixel);
+          photo.set_RGB(i, j, pixel_color, samples_per_pixel);
         }
         cout_mutex.lock();
         UpdateProgress(++cnt, image_height - 1);
@@ -71,8 +72,14 @@ public:
     for (auto &i : deque) {
       i.wait();
     }
-    // 图像生成
-    photo.generate(photoname);
+    // 图像生成 set_RGB
+    stbi_flip_vertically_on_write(true);
+    auto data = stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
+    if (!data) {
+      std::cerr << "ERROR: Could not load texture image file '" << photoname << "'.\n";
+    }
+    // 自己写的 bmp 输出
+    // photo.generate(photoname);
   }
   // 普通的采样，在一个像素格内采样 samples_per_pixel 次
   auto simple_random_sampling(uint32_t i, uint32_t j) -> color {

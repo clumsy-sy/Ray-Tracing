@@ -19,7 +19,6 @@ public:
     auto components_per_pixel = bytes_per_pixel;
     // 通过库来读取贴图的信息
     data = stbi_load(filename, &width, &height, &components_per_pixel, components_per_pixel);
-    // std::cout << "width : " << width << " height: " << height << std::endl;
     if (!data) {
       std::cerr << "ERROR: Could not load texture image file '" << filename << "'.\n";
       width = height = 0;
@@ -32,7 +31,7 @@ public:
     delete data;
   }
 
-  [[nodiscard]] auto value(double u, double v, const Vec3d &) const -> color override {
+  [[nodiscard]] auto value(double u, double v, const vec3d &) const -> color override {
     // If we have no texture data, then return solid cyan as a debugging aid.
     if (data == nullptr)
       return {0, 0, 0};
@@ -52,7 +51,6 @@ public:
 
     const auto color_scale = 1.0 / 255.0;
     auto pixel = data + j * bytes_per_scanline + i * bytes_per_pixel;
-    // printf("color : %.5lf  %.5lf  %.5lf\n", color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]);
     return {color_scale * pixel[0], color_scale * pixel[1], color_scale * pixel[2]};
   }
 };

@@ -21,21 +21,21 @@ auto cornell_box_new(hittable_list &world, hittable_list &lights) -> void {
   auto wlight = std::make_shared<diffuse_light>(color(15, 15, 15));
 
   // Cornell box sides
-  world.add(make_shared<quad>(point3(555, 0, 0), Vec3d(0, 0, 555), Vec3d(0, 555, 0), green));
-  world.add(make_shared<quad>(point3(0, 0, 555), Vec3d(0, 0, -555), Vec3d(0, 555, 0), red));
-  world.add(make_shared<quad>(point3(0, 555, 0), Vec3d(555, 0, 0), Vec3d(0, 0, 555), white));
-  world.add(make_shared<quad>(point3(0, 0, 555), Vec3d(555, 0, 0), Vec3d(0, 0, -555), white));
-  world.add(make_shared<quad>(point3(555, 0, 555), Vec3d(-555, 0, 0), Vec3d(0, 555, 0), white));
+  world.add(make_shared<quad>(point3(555, 0, 0), vec3d(0, 0, 555), vec3d(0, 555, 0), green));
+  world.add(make_shared<quad>(point3(0, 0, 555), vec3d(0, 0, -555), vec3d(0, 555, 0), red));
+  world.add(make_shared<quad>(point3(0, 555, 0), vec3d(555, 0, 0), vec3d(0, 0, 555), white));
+  world.add(make_shared<quad>(point3(0, 0, 555), vec3d(555, 0, 0), vec3d(0, 0, -555), white));
+  world.add(make_shared<quad>(point3(555, 0, 555), vec3d(-555, 0, 0), vec3d(0, 555, 0), white));
 
   // Light
-  world.add(std::make_shared<quad>(point3(213, 554, 227), Vec3d(130, 0, 0), Vec3d(0, 0, 105), wlight));
+  world.add(std::make_shared<quad>(point3(213, 554, 227), vec3d(130, 0, 0), vec3d(0, 0, 105), wlight));
 
   // Box
   auto aluminum = std::make_shared<metal>(color(0.8, 0.85, 0.88), 0.0);
   auto box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), aluminum);
   // auto box1 = std::make_shared<box>(point3(0,0,0), point3(165,330,165), white);
   auto box2 = std::make_shared<rotate_y>(box1, 15);
-  auto box3 = std::make_shared<translate>(box2, Vec3d(265, 0, 295));
+  auto box3 = std::make_shared<translate>(box2, vec3d(265, 0, 295));
   world.add(box3);
 
   // Glass Sphere
@@ -44,7 +44,7 @@ auto cornell_box_new(hittable_list &world, hittable_list &lights) -> void {
 
   // Light Sources
   auto m = std::shared_ptr<material>();
-  lights.add(make_shared<quad>(point3(343, 554, 332), Vec3d(-130, 0, 0), Vec3d(0, 0, -105), m));
+  lights.add(make_shared<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), m));
   lights.add(make_shared<sphere>(point3(190, 90, 190), 90, m));
 }
 
@@ -57,8 +57,8 @@ auto cornell_box(hittable_list &world, hittable_list &light) -> void {
   world.add(std::make_shared<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_shared<yz_rect>(0, 555, 0, 555, 0, red));
   auto m = std::shared_ptr<material>();
-  light.add(make_shared<quad>(point3(343, 554, 332), Vec3d(-130, 0, 0), Vec3d(0, 0, -105), m));
-  world.add(make_shared<quad>(point3(343, 554, 332), Vec3d(-130, 0, 0), Vec3d(0, 0, -105), wlight));
+  light.add(make_shared<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), m));
+  world.add(make_shared<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), wlight));
   // light.add(std::make_shared<xz_rect>(213, 343, 227, 332, 554, wlight));
   world.add(std::make_shared<xz_rect>(0, 555, 0, 555, 0, white));
   world.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
@@ -81,12 +81,12 @@ auto cornell_box_rotate(hittable_list &world, hittable_list &light) -> void {
 
   std::shared_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
   box1 = std::make_shared<rotate_y>(box1, 15);
-  box1 = std::make_shared<translate>(box1, Vec3d(265, 0, 295));
+  box1 = std::make_shared<translate>(box1, vec3d(265, 0, 295));
   boxbox.add(box1);
 
   std::shared_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
   box2 = std::make_shared<rotate_y>(box2, -18);
-  box2 = std::make_shared<translate>(box2, Vec3d(130, 0, 65));
+  box2 = std::make_shared<translate>(box2, vec3d(130, 0, 65));
   boxbox.add(box2);
   world.add(std::make_shared<bvh_node>(boxbox));
 }
@@ -107,11 +107,11 @@ auto cornell_smoke(hittable_list &world, hittable_list &light) -> void {
 
   std::shared_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
   box1 = std::make_shared<rotate_y>(box1, 15);
-  box1 = std::make_shared<translate>(box1, Vec3d(265, 0, 295));
+  box1 = std::make_shared<translate>(box1, vec3d(265, 0, 295));
 
   std::shared_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
   box2 = std::make_shared<rotate_y>(box2, -18);
-  box2 = std::make_shared<translate>(box2, Vec3d(130, 0, 65));
+  box2 = std::make_shared<translate>(box2, vec3d(130, 0, 65));
 
   world.add(std::make_shared<constant_medium>(box1, 0.01, color(0, 0, 0)));
   world.add(std::make_shared<constant_medium>(box2, 0.01, color(1, 1, 1)));

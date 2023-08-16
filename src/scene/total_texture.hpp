@@ -63,7 +63,7 @@ auto total_texture(hittable_list &world, hittable_list &light) -> void {
   }
 
   world.add(std::make_shared<translate>(
-      std::make_shared<rotate_y>(std::make_shared<bvh_node>(boxes2), 15), Vec3d(-100, 270, 395)));
+      std::make_shared<rotate_y>(std::make_shared<bvh_node>(boxes2), 15), vec3d(-100, 270, 395)));
 }
 
 #endif

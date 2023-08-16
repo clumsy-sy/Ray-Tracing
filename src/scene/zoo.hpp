@@ -34,7 +34,7 @@ auto bunny_world(hittable_list &world, hittable_list &light) -> void {
 
   auto bunnybox = std::make_shared<bvh_node>(bunny.triangles);
   auto box = std::make_shared<translate>(
-      std::make_shared<scale>(bunnybox, Vec3d(1, 1, 1)), Vec3d(0, -bunny.bbox.min().y(), 0));
+      std::make_shared<scale>(bunnybox, vec3d(1, 1, 1)), vec3d(0, -bunny.bbox.min().y(), 0));
   world.add(box);
 }
 
@@ -63,7 +63,7 @@ auto cow_world(hittable_list &world, hittable_list &light) -> void {
   auto rotatecow = std::make_shared<rotate_y>(cowbox, 150);
   aabb cowab = rotatecow->bounding_box();
   std::cout << cowab.center() << std::endl;
-  auto box = std::make_shared<translate>(rotatecow, Vec3d(0, -cowab.min()[1], 2));
+  auto box = std::make_shared<translate>(rotatecow, vec3d(0, -cowab.min()[1], 2));
   world.add(box);
 }
 
@@ -77,8 +77,8 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   world.add(std::make_shared<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_shared<yz_rect>(0, 555, 0, 555, 0, red));
   auto m = std::shared_ptr<material>();
-  light.add(make_shared<quad>(point3(343, 554, 332), Vec3d(-130, 0, 0), Vec3d(0, 0, -105), m));
-  world.add(make_shared<quad>(point3(343, 554, 332), Vec3d(-130, 0, 0), Vec3d(0, 0, -105), wlight));
+  light.add(make_shared<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), m));
+  world.add(make_shared<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), wlight));
   world.add(std::make_shared<xz_rect>(0, 555, 0, 555, 0, white));
   world.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
   world.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
@@ -87,23 +87,23 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   // auto box1 = std::make_shared<box>(point3(0,0,0), point3(165,330,165), aluminum);
   std::shared_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
   auto box1r = std::make_shared<rotate_y>(box1, 15);
-  auto box1rt = std::make_shared<translate>(box1r, Vec3d(265, 0, 295));
+  auto box1rt = std::make_shared<translate>(box1r, vec3d(265, 0, 295));
   world.add(box1rt);
 
   std::shared_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
   box2 = std::make_shared<rotate_y>(box2, -18);
-  box2 = std::make_shared<translate>(box2, Vec3d(130, 0, 65));
+  box2 = std::make_shared<translate>(box2, vec3d(130, 0, 65));
   world.add(box2);
 
   auto bunny = MeshTriangle("src/models/bunny/bunny.obj", 60.0f);
   std::cout << "bunny bounding box : " << bunny.bbox.min() << "    ||    " << bunny.bbox.max() << std::endl;
   auto bunnybox = std::make_shared<bvh_node>(bunny.triangles);
   auto rotatebunny = std::make_shared<rotate_y>(bunnybox, 180);
-  auto bigbunny = std::make_shared<scale>(rotatebunny, Vec3d(15, 15, 15));
+  auto bigbunny = std::make_shared<scale>(rotatebunny, vec3d(15, 15, 15));
   aabb bunnyaabb = bigbunny->bounding_box();
   auto center = bunnyaabb.center();
 
-  auto box = std::make_shared<translate>(bigbunny, Vec3d(330 + center[0], 300, 400));
+  auto box = std::make_shared<translate>(bigbunny, vec3d(330 + center[0], 300, 400));
   world.add(box);
 
   auto cow_texture = std::make_shared<image_texture>("src/models/spot/spot_texture.png");
@@ -115,7 +115,7 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   auto rotatecow = std::make_shared<rotate_y>(cowbox, 45);
   aabb cowab = rotatecow->bounding_box();
 
-  auto boxcow = std::make_shared<translate>(rotatecow, Vec3d(165, 165 - cowab.min()[1], 145));
+  auto boxcow = std::make_shared<translate>(rotatecow, vec3d(165, 165 - cowab.min()[1], 145));
   world.add(boxcow);
 }
 

@@ -20,11 +20,10 @@ auto main(int argc, const char **argv) -> int {
   double vfov = 40.0;
   auto world = new hittable_list();
   auto light = new hittable_list();
-  choose_scene(1, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, background);
-  std::cout << *world << std::endl;
-  std::cout << *light << std::endl;
+  choose_scene(11, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, background);
+
   // Camera
-  Vec3d vup(0, 1, 0);
+  vec3d vup(0, 1, 0);
   auto aperture = 0.1;
 
   camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture);

@@ -7,19 +7,19 @@
   camerabase {
     point3 origin ;
     point3 lower_left_corner;
-    Vec3d horizontal, vertical;
+    vec3d horizontal, vertical;
   }
   camera 是一个有透镜的摄像机
 */
 
 class camera : public camerabase {
 public:
-  Vec3d u, v, w;      // w:看向方向，u：镜头平面的 x，v：镜头屏幕的 y
+  vec3d u, v, w;      // w:看向方向，u：镜头平面的 x，v：镜头屏幕的 y
   double lens_radius; // 镜头半径
 
 public:
   camera() = default;
-  camera(const point3 &lookfrom, const point3 &lookat, const Vec3d &vup, double vfov, double aspect_ratio,
+  camera(const point3 &lookfrom, const point3 &lookat, const vec3d &vup, double vfov, double aspect_ratio,
       double aperture) {
     auto theta = degrees_to_radians(vfov);
     auto h = tan(theta / 2);
@@ -54,8 +54,8 @@ public:
 #endif
   }
   [[nodiscard]] auto get_ray(double s, double t) const -> ray override {
-    Vec3d rd = lens_radius * random_in_unit_disk();
-    Vec3d offset = u * rd.x() + v * rd.y(); // 镜头的光圈中随机一个点
+    vec3d rd = lens_radius * random_in_unit_disk();
+    vec3d offset = u * rd.x() + v * rd.y(); // 镜头的光圈中随机一个点
 
     return {origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset};
   }

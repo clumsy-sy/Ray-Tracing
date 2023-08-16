@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "hittable.hpp"
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 
 /*
   特殊的平行四边形类：
@@ -18,17 +18,17 @@
 class quad : public hittable {
 public:
   point3 Q;
-  Vec3d u, v;
+  vec3d u, v;
   std::shared_ptr<material> mat;
   aabb bbox;
   // 用来表示这个四边形所在的平面  Ax + By + Cz = D;
-  Vec3d normal;
+  vec3d normal;
   double D;
-  Vec3d w;
+  vec3d w;
   double area;
 
 public:
-  quad(point3 _Q, Vec3d _u, Vec3d _v, std::shared_ptr<material> m)
+  quad(point3 _Q, vec3d _u, vec3d _v, std::shared_ptr<material> m)
       : Q(std::move(_Q)), u(std::move(_u)), v(std::move(_v)), mat(std::move(m)) {
     auto n = cross(u, v);
     normal = unit_vector(n);
@@ -64,7 +64,7 @@ public:
 
     // Determine the hit point lies within the planar shape using its plane coordinates.
     auto intersection = r.at(t);
-    Vec3d planar_hitpt_vector = intersection - Q;
+    vec3d planar_hitpt_vector = intersection - Q;
     auto alpha = dot(w, cross(planar_hitpt_vector, v));
     auto beta = dot(w, cross(u, planar_hitpt_vector));
 
@@ -91,7 +91,7 @@ public:
     rec.v = b;
     return true;
   }
-  [[nodiscard]] auto pdf_value(const point3 &origin, const Vec3d &v) const -> double override {
+  [[nodiscard]] auto pdf_value(const point3 &origin, const vec3d &v) const -> double override {
     hit_record rec;
     if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
       return 0;
@@ -102,7 +102,7 @@ public:
     return distance_squared / (cosine * area);
   }
 
-  [[nodiscard]] auto random(const point3 &origin) const -> Vec3d override {
+  [[nodiscard]] auto random(const point3 &origin) const -> vec3d override {
     auto p = Q + (random_double() * u) + (random_double() * v);
     return p - origin;
   }

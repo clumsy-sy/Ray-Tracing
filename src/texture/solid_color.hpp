@@ -12,7 +12,7 @@ public:
   solid_color(color c) : color_value(std::move(c)) {}
   solid_color(double red, double green, double blue) : solid_color(color(red, green, blue)) {}
 
-  [[nodiscard]] auto value(double, double, const Vec3d &) const -> color override {
+  [[nodiscard]] auto value(double, double, const vec3d &) const -> color override {
     return color_value;
   }
 };

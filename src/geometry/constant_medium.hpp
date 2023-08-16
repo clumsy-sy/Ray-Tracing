@@ -71,7 +71,7 @@ auto constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const -
               << "rec.p = " << rec.p << '\n';
   }
 
-  rec.normal = Vec3d(1, 0, 0); // arbitrary
+  rec.normal = vec3d(1, 0, 0); // arbitrary
   rec.front_face = true;       // also arbitrary
   rec.mat_ptr = phase_function;
 

@@ -10,7 +10,7 @@
 */
 
 #include "../global.hpp"
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 
 namespace bmp {
 struct BMP_FILE_HEADER {
@@ -52,7 +52,7 @@ public:
         static_cast<unsigned char>(255.999 * clamp(pixel_color.y(), 0.0, 0.999)),
         static_cast<unsigned char>(255.999 * clamp(pixel_color.x(), 0.0, 0.999))};
   }
-  auto set(int x, int y, color pixel_color, int samples_per_pixel) {
+  auto set_BGR(int x, int y, color &pixel_color, int samples_per_pixel) {
     // Divide the color by the number of samples.
     auto scale = 1.0 / samples_per_pixel;
     pixel_color *= scale;
@@ -62,6 +62,17 @@ public:
     image[y * width + x] = {static_cast<unsigned char>(256 * clamp(pixel_color.z(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.y(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.x(), 0.0, 0.999))};
+  }
+  auto set_RGB(int x, int y, color &pixel_color, int samples_per_pixel) {
+    // Divide the color by the number of samples.
+    auto scale = 1.0 / samples_per_pixel;
+    pixel_color *= scale;
+    // gamma Correction to accurate color intensity
+    pixel_color.sqrt(); // 变亮
+    // Write the translated [0,255] value of each color component.
+    image[y * width + x] = {static_cast<unsigned char>(256 * clamp(pixel_color.x(), 0.0, 0.999)),
+        static_cast<unsigned char>(256 * clamp(pixel_color.y(), 0.0, 0.999)),
+        static_cast<unsigned char>(256 * clamp(pixel_color.z(), 0.0, 0.999))};
   }
   auto generate(const std::string &filename) {
     if (width % 4) {

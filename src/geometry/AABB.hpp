@@ -1,7 +1,7 @@
 #ifndef AABB_HPP
 #define AABB_HPP
 
-#include "../vector/Vec3dx4.hpp"
+#include "../vector/vec3dx4.h"
 #include "ray.hpp"
 #include "interval.hpp"
 
@@ -115,11 +115,11 @@ inline auto surrounding_box(const aabb &box0, const aabb &box1) -> aabb {
   };
 }
 
-auto operator+(const aabb& bbox, const Vec3d& offset) -> aabb {
+auto operator+(const aabb& bbox, const vec3d& offset) -> aabb {
     return {bbox.x() + offset.x(), bbox.y() + offset.y(), bbox.z() + offset.z()};
 }
 
-auto operator+(const Vec3d& offset, const aabb& bbox) -> aabb {
+auto operator+(const vec3d& offset, const aabb& bbox) -> aabb {
     return bbox + offset;
 }
 #endif
