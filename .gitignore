@@ -3,3 +3,4 @@ build/
 cmake-build*/
 *.gch
 Img*.bmp
+*.o
