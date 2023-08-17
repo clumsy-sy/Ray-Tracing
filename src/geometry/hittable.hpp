@@ -22,6 +22,13 @@ struct hit_record {
     front_face = dot(r.direction(), outward_normal) < 0;
     normal = front_face ? outward_normal : -outward_normal;
   }
+  // auto operator=(hit_record &rec) {
+  //   p = rec.p;
+  //   normal = rec.normal;
+  //   mat_ptr = std::move(rec.mat_ptr);
+  //   t = rec.t, u = rec.u, v = rec.v;
+  //   front_face = rec.front_face;
+  // }
 };
 
 class hittable {
@@ -37,7 +44,6 @@ public:
     return {1, 0, 0};
   }
   virtual ~hittable() = default;
-  // virtual auto operator<<(std::ostream &os) -> std::ostream & = 0;
 };
 
 #endif

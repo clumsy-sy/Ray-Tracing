@@ -3,6 +3,7 @@
 
 #include "../geometry/ray.hpp"
 #include "pdf.hpp"
+#include <memory>
 struct hit_record;
 
 class scatter_record {
@@ -11,6 +12,12 @@ public:
   std::shared_ptr<pdf> pdf_ptr;
   bool skip_pdf;
   ray skip_pdf_ray;
+  auto operator=(scatter_record &srec) {
+    attenuation = srec.attenuation;
+    pdf_ptr = std::move(srec.pdf_ptr);
+    skip_pdf = srec.skip_pdf;
+    skip_pdf_ray = srec.skip_pdf_ray;
+  }
 };
 /*
   base class: attenuation(颜色衰减) & scattered（散射光）& emited (光源发射)

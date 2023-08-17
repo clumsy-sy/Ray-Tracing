@@ -46,7 +46,7 @@ auto xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.t = t;
   auto outward_normal = vec3d(0, 0, 1);
   rec.set_face_normal(r, outward_normal);
-  rec.mat_ptr = mp;
+  rec.mat_ptr = std::move(mp);
   rec.p = r.at(t);
   return true;
 }
@@ -93,7 +93,7 @@ auto xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.t = t;
   auto outward_normal = vec3d(0, 1, 0);
   rec.set_face_normal(r, outward_normal);
-  rec.mat_ptr = mp;
+  rec.mat_ptr = std::move(mp);
   rec.p = r.at(t);
   return true;
 }
@@ -140,7 +140,7 @@ auto yz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
   rec.t = t;
   auto outward_normal = vec3d(1, 0, 0);
   rec.set_face_normal(r, outward_normal);
-  rec.mat_ptr = mp;
+  rec.mat_ptr = std::move(mp);
   rec.p = r.at(t);
   return true;
 }

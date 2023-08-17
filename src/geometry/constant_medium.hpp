@@ -10,15 +10,15 @@
 
 class constant_medium : public hittable {
 public:
-  std::shared_ptr<hittable> boundary;       // 边界
+  std::unique_ptr<hittable> boundary;       // 边界
   std::shared_ptr<material> phase_function; // 作用效果
   double neg_inv_density;
 
 public:
-  constant_medium(std::shared_ptr<hittable> b, double d, std::shared_ptr<texture> a)
+  constant_medium(std::unique_ptr<hittable> b, double d, std::shared_ptr<texture> a)
       : boundary(std::move(b)), phase_function(make_shared<isotropic>(a)), neg_inv_density(-1 / d) {}
 
-  constant_medium(std::shared_ptr<hittable> b, double d, color c)
+  constant_medium(std::unique_ptr<hittable> b, double d, color c)
       : boundary(std::move(b)), phase_function(std::make_shared<isotropic>(c)), neg_inv_density(-1 / d) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;

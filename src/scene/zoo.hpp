@@ -85,12 +85,12 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
 
   // auto aluminum = std::make_shared<metal>(color(0.8, 0.85, 0.88), 0.0);
   // auto box1 = std::make_shared<box>(point3(0,0,0), point3(165,330,165), aluminum);
-  std::shared_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
+  std::unique_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
   auto box1r = std::make_shared<rotate_y>(box1, 15);
   auto box1rt = std::make_shared<translate>(box1r, vec3d(265, 0, 295));
   world.add(box1rt);
 
-  std::shared_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
+  std::unique_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
   box2 = std::make_shared<rotate_y>(box2, -18);
   box2 = std::make_shared<translate>(box2, vec3d(130, 0, 65));
   world.add(box2);

@@ -21,7 +21,7 @@ stb_image_gch: src/external/rtw_stb_image.hpp
 	$(CC) src/external/rtw_stb_image.hpp $(CFLAGS)
 
 stb_image_write_o: src/external/rtw_stb_image_write.cpp
-	$(CC) -c src/external/rtw_stb_image_write.cpp -o build/rtw_stb_image_write.o $(CFLAGS)
+	$(CC) -c src/external/rtw_stb_image_write.cpp -o build/stb_image_write.o $(CFLAGS)
 stb_image_write_gch: src/external/rtw_stb_image_write.h
 	$(CC) src/external/rtw_stb_image_write.h $(CFLAGS)
 
@@ -64,7 +64,7 @@ clean:
 
 .PHONY : buildclean
 buildclean:
-	cd src/build && rm -rf *
+	cd build/ && rm -rf *
 
 .PHONY : convert
 convert:

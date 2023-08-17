@@ -20,7 +20,7 @@ auto main(int argc, const char **argv) -> int {
   double vfov = 40.0;
   auto world = new hittable_list();
   auto light = new hittable_list();
-  choose_scene(11, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, background);
+  choose_scene(5, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, background);
 
   // Camera
   vec3d vup(0, 1, 0);

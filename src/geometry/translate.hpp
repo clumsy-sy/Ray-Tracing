@@ -6,11 +6,11 @@
 
 class translate : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   vec3d offset;
 
 public:
-  translate(std::shared_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
+  translate(std::unique_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -34,11 +34,11 @@ auto translate::bounding_box() const -> aabb {
 
 class scale : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   vec3d vec;
 
 public:
-  scale(std::shared_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
+  scale(std::unique_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -62,13 +62,13 @@ auto scale::bounding_box() const -> aabb {
 
 class rotate_y : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_y(std::shared_ptr<hittable> p, double angle);
+  rotate_y(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -77,7 +77,7 @@ public:
   }
 };
 
-rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -98,10 +98,8 @@ rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
         vec3d tester(newx, y, newz);
 
-        for (int c = 0; c < 3; c++) {
-          min[c] = std::min(min[c], tester[c]);
-          max[c] = std::max(max[c], tester[c]);
-        }
+        min = merge_min(min, tester);
+        max = merge_max(max, tester);
       }
     }
   }
@@ -109,28 +107,26 @@ rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   bbox = aabb(min, max);
 }
 auto rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto origin = r.origin();
-  auto direction = r.direction();
-
-  origin[0] = cos_theta * r.origin()[0] - sin_theta * r.origin()[2];
-  origin[2] = sin_theta * r.origin()[0] + cos_theta * r.origin()[2];
-
-  direction[0] = cos_theta * r.direction()[0] - sin_theta * r.direction()[2];
-  direction[2] = sin_theta * r.direction()[0] + cos_theta * r.direction()[2];
+  auto rot = [s = sin_theta, c = cos_theta](const vec3d &v) {
+    double r0 = c * v.x() - s * v.z();
+    double r2 = s * v.x() + c * v.z();
+    return vec3d{r0, v.y(), r2};
+  };
+  auto origin = rot(r.origin());
+  auto direction = rot(r.direction());
 
   ray rotated_r(origin, direction);
 
   if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
-  auto p = rec.p;
-  auto normal = rec.normal;
-
-  p[0] = cos_theta * rec.p[0] + sin_theta * rec.p[2];
-  p[2] = -sin_theta * rec.p[0] + cos_theta * rec.p[2];
-
-  normal[0] = cos_theta * rec.normal[0] + sin_theta * rec.normal[2];
-  normal[2] = -sin_theta * rec.normal[0] + cos_theta * rec.normal[2];
+  auto roti = [s = -sin_theta, c = cos_theta](const vec3d &v) {
+    double r0 = c * v.x() - s * v.z();
+    double r2 = s * v.x() + c * v.z();
+    return vec3d{r0, v.y(), r2};
+  };
+  auto p = roti(rec.p);
+  auto normal = roti(rec.normal);
 
   rec.p = p;
   rec.set_face_normal(rotated_r, normal);
@@ -140,13 +136,13 @@ auto rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 
 class rotate_x : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_x(std::shared_ptr<hittable> p, double angle);
+  rotate_x(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -155,7 +151,7 @@ public:
   }
 };
 
-rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -176,10 +172,8 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
         vec3d tester(x, newy, newz);
 
-        for (int c = 0; c < 3; c++) {
-          min[c] = std::min(min[c], tester[c]);
-          max[c] = std::max(max[c], tester[c]);
-        }
+        min = merge_min(min, tester);
+        max = merge_max(max, tester);
       }
     }
   }
@@ -187,28 +181,27 @@ rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   bbox = aabb(min, max);
 }
 auto rotate_x::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto origin = r.origin();
-  auto direction = r.direction();
+  auto rot = [s = sin_theta, c = cos_theta](const vec3d &v) {
+    double r1 = c * v.y() - s * v.z();
+    double r2 = s * v.y() + c * v.z();
+    return vec3d{v.x(), r1, r2};
+  };
 
-  origin[1] = cos_theta * r.origin()[1] - sin_theta * r.origin()[2];
-  origin[2] = sin_theta * r.origin()[1] + cos_theta * r.origin()[2];
-
-  direction[1] = cos_theta * r.direction()[1] - sin_theta * r.direction()[2];
-  direction[2] = sin_theta * r.direction()[1] + cos_theta * r.direction()[2];
+  auto origin = rot(r.origin());
+  auto direction = rot(r.direction());
 
   ray rotated_r(origin, direction);
 
   if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
-  auto p = rec.p;
-  auto normal = rec.normal;
-
-  p[1] = cos_theta * rec.p[1] + sin_theta * rec.p[2];
-  p[2] = -sin_theta * rec.p[1] + cos_theta * rec.p[2];
-
-  normal[1] = cos_theta * rec.normal[1] + sin_theta * rec.normal[2];
-  normal[2] = -sin_theta * rec.normal[1] + cos_theta * rec.normal[2];
+  auto roti = [s = -sin_theta, c = cos_theta](const vec3d &v) {
+    double r1 = c * v.y() - s * v.z();
+    double r2 = s * v.y() + c * v.z();
+    return vec3d{v.x(), r1, r2};
+  };
+  auto p = roti(rec.p);
+  auto normal = roti(rec.normal);
 
   rec.p = p;
   rec.set_face_normal(rotated_r, normal);
@@ -218,13 +211,13 @@ auto rotate_x::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 
 class rotate_z : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_z(std::shared_ptr<hittable> p, double angle);
+  rotate_z(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -233,7 +226,7 @@ public:
   }
 };
 
-rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -254,10 +247,8 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
 
         vec3d tester(newx, newy, z);
 
-        for (int c = 0; c < 3; c++) {
-          min[c] = std::min(min[c], tester[c]);
-          max[c] = std::max(max[c], tester[c]);
-        }
+        min = merge_min(min, tester);
+        max = merge_max(max, tester);
       }
     }
   }
@@ -265,29 +256,28 @@ rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)
   bbox = aabb(min, max);
 }
 auto rotate_z::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto origin = r.origin();
-  auto direction = r.direction();
+  auto rot = [s = sin_theta, c = cos_theta](const vec3d &v) {
+    double r1 = c * v.y() - s * v.x();
+    double r0 = s * v.y() + c * v.x();
+    return vec3d{r0, r1, v.z()};
+  };
 
-  origin[1] = cos_theta * r.origin()[1] - sin_theta * r.origin()[0];
-  origin[0] = sin_theta * r.origin()[1] + cos_theta * r.origin()[0];
-
-  direction[1] = cos_theta * r.direction()[1] - sin_theta * r.direction()[0];
-  direction[0] = sin_theta * r.direction()[1] + cos_theta * r.direction()[0];
+  auto origin = rot(r.origin());
+  auto direction =  rot(r.direction());
 
   ray rotated_r(origin, direction);
 
   if (!ptr->hit(rotated_r, ray_t, rec))
     return false;
 
-  auto p = rec.p;
-  auto normal = rec.normal;
-
-  p[1] = cos_theta * rec.p[1] + sin_theta * rec.p[0];
-  p[0] = -sin_theta * rec.p[1] + cos_theta * rec.p[0];
-
-  normal[1] = cos_theta * rec.normal[1] + sin_theta * rec.normal[0];
-  normal[0] = -sin_theta * rec.normal[1] + cos_theta * rec.normal[0];
-
+  auto roti = [s = sin_theta, c = cos_theta](const vec3d &v) {
+    double r1 = c * v.y() - s * v.x();
+    double r0 = s * v.y() + c * v.x();
+    return vec3d{r0, r1, v.z()};
+  };
+  auto p = roti(rec.p);
+  auto normal = roti(rec.normal);
+  
   rec.p = p;
   rec.set_face_normal(rotated_r, normal);
 
