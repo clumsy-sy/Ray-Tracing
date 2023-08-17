@@ -2,36 +2,34 @@
 #define VECTOR3DX4_HPP
 
 #include "../global.hpp"
-#include "../external/simd.hpp"
 #include <ostream>
+
+#include "immintrin.h"
 /*
   向量|点|颜色 {x, y, z, w}
   simd<double, 4> e
 */
 class vec3d {
 public:
-  using f64x4 = simd<double, 4>;
+  using f64x4 = __m256d;
   f64x4 e;
 
 public:
   vec3d() : e() {}
   vec3d(const vec3d &) = default;
   vec3d(vec3d &&) = default;
-  auto operator=(const vec3d &v) -> vec3d & {
-    e.r = v.e.r;
-    return *this;
-  };
+  auto operator=(const vec3d &v) -> vec3d & = default;;
   auto operator=(vec3d &&v) noexcept -> vec3d & {
-    e.r = v.e.r;
+    e = v.e;
     return *this;
   };
-  vec3d(double xx) : e(xx, xx, xx, 0) {}
-  vec3d(double xx, double yy, double zz) : e(xx, yy, zz, 0) {}
-  vec3d(const f64x4 &other) : e(other.r) {}
+  vec3d(const f64x4 &f4) : e(f4) {};
+  vec3d(double xx) : e{xx, xx, xx, 0} {}
+  vec3d(double xx, double yy, double zz) : e{xx, yy, zz, 0} {}
   // clang-format off
   auto operator-() const -> vec3d { return -e; }
   auto operator[](int i) const -> double { return i < 3 ? e[i] : 0; }
-  auto operator[](int i) -> double & { return i < 3 ? e[i] : e[3]; }
+  // auto operator[](int i) -> double & { return i < 3 ? e[i] : e[3]; }
   [[nodiscard]] auto x() const -> double { return e[0]; }
   [[nodiscard]] auto y() const -> double { return e[1]; }
   [[nodiscard]] auto z() const -> double { return e[2]; }
@@ -78,8 +76,7 @@ public:
   }
   // {x, y, z} 开方
   inline auto sqrt() -> vec3d & {
-    auto res = std::sqrt(e);
-    this->e = res.r;
+    e = _mm256_sqrt_pd(e);
     return *this;
   }
   // 变为单位向量
@@ -182,6 +179,12 @@ inline auto random_to_sphere(double radius, double distance_squared) -> vec3d {
 // 线性插值
 inline auto lerp(const vec3d &a, const vec3d &b, const float &t) -> vec3d {
   return a * (1 - t) + b * t;
+}
+inline auto merge_min(const vec3d &l, const vec3d &r) -> vec3d {
+  return _mm256_min_pd(l.e, r.e);
+}
+inline auto merge_max(const vec3d &l, const vec3d &r) -> vec3d {
+  return _mm256_max_pd(l.e, r.e);
 }
 
 using point3 = vec3d;
