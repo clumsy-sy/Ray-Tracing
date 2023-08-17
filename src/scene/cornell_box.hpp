@@ -50,7 +50,6 @@
 // }
 
 auto cornell_box(hittable_list &world, hittable_list &light) -> void {
-  std::cout << 1 << std::endl;
   auto red = std::make_shared<lambertian>(color(.65, .05, .05));
   auto white = std::make_shared<lambertian>(color(.73, .73, .73));
   auto green = std::make_shared<lambertian>(color(.12, .45, .15));

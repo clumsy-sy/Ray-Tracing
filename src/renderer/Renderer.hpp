@@ -135,7 +135,6 @@ public:
 
     color sample_color = ray_color(scattered, world, lights, depth - 1);
     color color_from_scatter = (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
-
     return color_from_emission + color_from_scatter;
   }
 };

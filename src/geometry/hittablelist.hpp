@@ -16,10 +16,8 @@ public:
   }
 
   void add(std::unique_ptr<hittable> object) {
-    std::cout << 2 << std::endl;
-    objects.emplace_back(std::move(object));
-    std::cout << object->bounding_box().center() << std::endl;
     bbox = aabb(bbox, object->bounding_box());
+    objects.emplace_back(std::move(object));
   }
 
 
