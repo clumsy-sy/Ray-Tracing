@@ -3,24 +3,25 @@
 
 #include "hittable.hpp"
 #include "interval.hpp"
+#include <memory>
 
 class hittable_list : public hittable {
 public:
-  std::vector<std::shared_ptr<hittable>> objects;
+  std::vector<std::unique_ptr<hittable>> objects;
   aabb bbox;
 
 public:
   hittable_list() = default;
-  hittable_list(const std::shared_ptr<hittable> &object) {
-    add(object);
+  hittable_list(std::unique_ptr<hittable> object) {
+    add(std::move(object));
   }
 
   void clear() {
     objects.clear();
   }
-  void add(const std::shared_ptr<hittable> &object) {
-    objects.emplace_back(object);
+  void add(std::unique_ptr<hittable> object) {
     bbox = aabb(bbox, object->bounding_box());
+    objects.emplace_back(std::move(object));
   }
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;

@@ -1,12 +1,11 @@
 #ifndef ONB_HPP
 #define ONB_HPP
 
-#include "../global.hpp"
 #include "../vector/vec3dx4.h"
 
 class onb {
 public:
-  vec3d axis[3];
+  std::array<vec3d, 3> axis;
 
 public:
   onb() = default;

@@ -2,8 +2,8 @@
 #define MESHTRIANGLE_hpp
 
 #include "../global.hpp"
-#include "BVH.hpp"
 #include "hittable.hpp"
+#include "hittablelist.hpp"
 #include "interval.hpp"
 #include "triangle.hpp"
 
@@ -42,7 +42,7 @@ public:
         face_vertices[j] = vert;
         texture[j] = tex;
       }
-      triangles.add(std::make_shared<triangle>(face_vertices, texture, mat_ptr));
+      triangles.add(std::make_unique<triangle>(face_vertices, texture, mat_ptr));
     }
     bbox = triangles.bounding_box();
   }
@@ -56,8 +56,7 @@ public:
   }
 };
 auto MeshTriangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto tree = std::make_shared<bvh_node>(triangles);
-  return tree->hit(r, ray_t, rec);
+  return triangles.hit(r, ray_t, rec);
 }
 
 auto MeshTriangle::bounding_box() const -> aabb {

@@ -14,7 +14,7 @@ public:
   std::string photoname = "Img.bmp";
   static_assert(std::is_base_of<camerabase, Camera>::value, "Camera not derived from camerabase");
   Camera cam;
-  hittable_list world, light;
+  hittable_list &world, &light;
   double aspect_ratio = 16.0 / 9.0;
   uint32_t image_width = 1200;
   uint32_t image_height = static_cast<uint32_t>(image_width / aspect_ratio);
