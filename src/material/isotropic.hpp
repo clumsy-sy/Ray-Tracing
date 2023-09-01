@@ -9,11 +9,11 @@
 // 随机方向散射材料
 class isotropic : public material {
 public:
-  std::shared_ptr<texture> albedo;
+  texture* albedo;
 
 public:
-  isotropic(color c) : albedo(std::make_shared<solid_color>(c)) {}
-  isotropic(std::shared_ptr<texture> a) : albedo(std::move(a)) {}
+  isotropic(color c) : albedo(new solid_color(c)) {}
+  isotropic(texture* a) : albedo(a) {}
 
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);

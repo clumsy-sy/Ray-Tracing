@@ -13,7 +13,7 @@ public:
 
 public:
   box() = default;
-  box(const point3 &p0, const point3 &p1, const std::shared_ptr<material> &ptr);
+  box(const point3 &p0, const point3 &p1, material* ptr);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -22,7 +22,7 @@ public:
   }
 };
 
-box::box(const point3 &p0, const point3 &p1, const std::shared_ptr<material> &ptr) {
+box::box(const point3 &p0, const point3 &p1, material* ptr) {
   box_min = p0;
   box_max = p1;
 

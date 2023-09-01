@@ -7,11 +7,11 @@
 
 class diffuse_light : public material {
 public:
-  std::shared_ptr<texture> emit;
+  texture* emit;
 
 public:
-  diffuse_light(std::shared_ptr<texture> a) : emit(std::move(a)) {}
-  diffuse_light(color c) : emit(std::make_shared<solid_color>(c)) {}
+  diffuse_light(texture* a) : emit(a) {}
+  diffuse_light(color c) : emit(new solid_color(c)) {}
 
   auto scatter([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,
       [[maybe_unused]] scatter_record &srec) const -> bool override {

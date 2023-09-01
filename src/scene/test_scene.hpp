@@ -9,10 +9,10 @@
 
 auto test_scene(hittable_list &world, hittable_list &light) -> void {
 
-  auto red = std::make_shared<lambertian>(color(.65, .05, .05));
-  auto white = std::make_shared<lambertian>(color(.73, .73, .73));
-  auto green = std::make_shared<lambertian>(color(.12, .45, .15));
-  auto wlight = std::make_shared<diffuse_light>(color(15, 15, 15));
+  auto red = new lambertian(color(.65, .05, .05));
+  auto white = new lambertian(color(.73, .73, .73));
+  auto green = new lambertian(color(.12, .45, .15));
+  auto wlight = new diffuse_light(color(15, 15, 15));
 
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));
@@ -21,7 +21,7 @@ auto test_scene(hittable_list &world, hittable_list &light) -> void {
   world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
   world.add(std::make_unique<xy_rect>(0, 555, 0, 555, 555, white));
 
-  auto mat_ptr = std::make_shared<lambertian>(color(.12, .45, .15));
+  auto mat_ptr = new lambertian(color(.12, .45, .15));
   auto v0 = vec3d(1, 100, 100);
   auto v1 = vec3d(1, 450, 100);
   auto v2 = vec3d(1, 450, 450);

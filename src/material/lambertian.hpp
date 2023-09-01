@@ -8,11 +8,11 @@
 
 class lambertian : public material {
 public:
-  std::shared_ptr<texture> albedo; // 以某种概率分布衰减，albedo / p
+  texture *albedo; // 以某种概率分布衰减，albedo / p
 
 public:
-  lambertian(const color &a) : albedo(std::make_shared<solid_color>(a)) {}
-  lambertian(std::shared_ptr<texture> a) : albedo(std::move(a)) {}
+  lambertian(const color &a) : albedo(new solid_color(a)) {}
+  lambertian(texture *a) : albedo(a) {}
 
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);

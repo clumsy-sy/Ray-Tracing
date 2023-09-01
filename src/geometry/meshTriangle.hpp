@@ -18,14 +18,14 @@ class MeshTriangle : public hittable {
 public:
   hittable_list triangles;
   double scale = 1.0f; // 缩放系数
-  std::shared_ptr<material> mat_ptr;
+  material* mat_ptr;
   aabb bbox;
 
 public:
   MeshTriangle() = default;
   MeshTriangle(const std::string &filename, double s = 1.0f,
-      std::shared_ptr<material> m = std::make_shared<lambertian>(color(0.51765, 0.43922, 1) * 0.75))
-      : scale(s), mat_ptr(std::move(m)) {
+      material* m = new lambertian(color(0.51765, 0.43922, 1) * 0.75))
+      : scale(s), mat_ptr(m) {
     objl::Loader loader;
     loader.LoadFile(filename);
     assert(loader.LoadedMeshes.size() == 1);

@@ -10,7 +10,7 @@ class sphere : public hittable {
 public:
   point3 center;
   double radius, radius2;
-  std::shared_ptr<material> mat_ptr;
+  material* mat_ptr;
   aabb bbox;
 
 private:
@@ -30,8 +30,8 @@ private:
 
 public:
   sphere() = default;
-  sphere(point3 c, double r, std::shared_ptr<material> m)
-      : center(std::move(c)), radius(r), radius2(r * r), mat_ptr(std::move(m)) {
+  sphere(point3 c, double r, material* m)
+      : center(std::move(c)), radius(r), radius2(r * r), mat_ptr(m) {
     // 圆的 AABB 就是(圆心 - r)三个方向 和 （圆心 + r）三个方向
     bbox = aabb(center - vec3d(radius, radius, radius), center + vec3d(radius, radius, radius));
   };
