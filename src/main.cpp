@@ -34,7 +34,7 @@ auto main(int argc, const char **argv) -> int {
   renderer.set_samples_per_pixel(512);
   renderer.set_max_depth(5);
   renderer.set_background(background);
-  // renderer.set_async_num(1);
+  renderer.set_async_num(64);
   renderer.render();
 
   return 0;
