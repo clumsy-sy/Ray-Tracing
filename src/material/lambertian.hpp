@@ -16,7 +16,11 @@ public:
 
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
-    srec.pdf_ptr = std::make_shared<cosine_pdf>(rec.normal);
+    // std::cout << 2 << std::endl;
+    srec.pdf_ptr = new cosine_pdf(rec.normal);
+    if (srec.pdf_ptr == nullptr) {
+      std::cout << "NULL" << std::endl;
+    }
     srec.skip_pdf = false;
     return true;
   }

@@ -6,13 +6,13 @@
 // 在 xy 屏幕上的矩形，z 固定
 class xy_rect : public hittable {
 public:
-  material* mp;
+  material *mp;
   double x0, x1, y0, y1, k;
 
 public:
   xy_rect() = default;
 
-  xy_rect(double _x0, double _x1, double _y0, double _y1, double _k, material* mat)
+  xy_rect(double _x0, double _x1, double _y0, double _y1, double _k, material *mat)
       : mp(mat), x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k){};
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
@@ -53,13 +53,13 @@ auto xy_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
 
 class xz_rect : public hittable {
 public:
-  material* mp;
+  material *mp;
   double x0, x1, z0, z1, k;
 
 public:
   xz_rect() = default;
 
-  xz_rect(double _x0, double _x1, double _z0, double _z1, double _k, material* mat)
+  xz_rect(double _x0, double _x1, double _z0, double _z1, double _k, material *mat)
       : mp(mat), x0(_x0), x1(_x1), z0(_z0), z1(_z1), k(_k){};
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
@@ -100,13 +100,13 @@ auto xz_rect::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
 
 class yz_rect : public hittable {
 public:
-  material* mp;
+  material *mp;
   double y0, y1, z0, z1, k;
 
 public:
   yz_rect() = default;
 
-  yz_rect(double _y0, double _y1, double _z0, double _z1, double _k, material* mat)
+  yz_rect(double _y0, double _y1, double _z0, double _z1, double _k, material *mat)
       : mp(mat), y0(_y0), y1(_y1), z0(_z0), z1(_z1), k(_k){};
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;

@@ -7,10 +7,10 @@
 
 class diffuse_light : public material {
 public:
-  texture* emit;
+  texture *emit;
 
 public:
-  diffuse_light(texture* a) : emit(a) {}
+  diffuse_light(texture *a) : emit(a) {}
   diffuse_light(color c) : emit(new solid_color(c)) {}
 
   auto scatter([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,

@@ -46,8 +46,7 @@ auto total_texture(hittable_list &world, hittable_list &light) -> void {
 
   world.add(std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)));
   world.add(std::make_unique<constant_medium>(
-      std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)), 0.2,
-      color(0.2, 0.4, 0.9)));
+      std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)), 0.2, color(0.2, 0.4, 0.9)));
   world.add(std::make_unique<constant_medium>(
       std::make_unique<sphere>(point3(0, 0, 0), 5000, new dielectric(1.5)), .0001, color(1, 1, 1)));
 

@@ -19,19 +19,19 @@ public:
   vec3d e1, e2;      // 2 edges v1-v0, v2-v0; 求光线交有用
   pdd t0, t1, t2;    // texture coords
   vec3d normal;
-  material* mat_ptr;
+  material *mat_ptr;
   aabb bbox;
 
 public:
   triangle() = default;
-  triangle(point3 _v0, point3 _v1, point3 _v2, material* m)
+  triangle(point3 _v0, point3 _v1, point3 _v2, material *m)
       : v0(std::move(_v0)), v1(std::move(_v1)), v2(std::move(_v2)), mat_ptr(m) {
     e1 = v1 - v0;
     e2 = v2 - v0;
     normal = unit_vector(cross(e1, e2));
     bbox = getaabb();
   }
-  triangle(std::array<vec3d, 3> &vec, std::array<pdd, 3> &tex, material* m) : mat_ptr(m) {
+  triangle(std::array<vec3d, 3> &vec, std::array<pdd, 3> &tex, material *m) : mat_ptr(m) {
     setVector(vec);
     setTexture(tex);
     e1 = v1 - v0;

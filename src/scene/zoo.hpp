@@ -100,7 +100,6 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   auto center = bunnyaabb.center();
   auto box = std::make_unique<translate>(std::move(bigbunny), vec3d(330 + center[0], 300, 400));
   world.add(std::move(box));
-  std::cout << 3 << std::endl;
   auto cow_texture = new image_texture("src/models/spot/spot_texture.png");
   auto cow_surface = new lambertian(cow_texture);
   auto cow = MeshTriangle("src/models/spot/spot_triangulated_good.obj", 80, cow_surface);

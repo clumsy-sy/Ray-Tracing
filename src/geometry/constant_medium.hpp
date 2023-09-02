@@ -11,12 +11,12 @@
 
 class constant_medium : public hittable {
 public:
-  std::unique_ptr<hittable> boundary;       // 边界
-  material* phase_function; // 作用效果
+  std::unique_ptr<hittable> boundary; // 边界
+  material *phase_function;           // 作用效果
   double neg_inv_density;
 
 public:
-  constant_medium(std::unique_ptr<hittable> b, double d, texture* a)
+  constant_medium(std::unique_ptr<hittable> b, double d, texture *a)
       : boundary(std::move(b)), phase_function(new isotropic(a)), neg_inv_density(-1 / d) {}
 
   constant_medium(std::unique_ptr<hittable> b, double d, color c)
