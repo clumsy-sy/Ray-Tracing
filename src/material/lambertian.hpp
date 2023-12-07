@@ -8,15 +8,19 @@
 
 class lambertian : public material {
 public:
-  std::shared_ptr<texture> albedo; // 以某种概率分布衰减，albedo / p
+  texture *albedo; // 以某种概率分布衰减，albedo / p
 
 public:
-  lambertian(const color &a) : albedo(std::make_shared<solid_color>(a)) {}
-  lambertian(std::shared_ptr<texture> a) : albedo(std::move(a)) {}
+  lambertian(const color &a) : albedo(new solid_color(a)) {}
+  lambertian(texture *a) : albedo(a) {}
 
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
-    srec.pdf_ptr = std::make_shared<cosine_pdf>(rec.normal);
+    // std::cout << 2 << std::endl;
+    srec.pdf_ptr = new cosine_pdf(rec.normal);
+    if (srec.pdf_ptr == nullptr) {
+      std::cout << "NULL" << std::endl;
+    }
     srec.skip_pdf = false;
     return true;
   }

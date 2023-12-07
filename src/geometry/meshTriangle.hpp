@@ -2,8 +2,8 @@
 #define MESHTRIANGLE_hpp
 
 #include "../global.hpp"
-#include "BVH.hpp"
 #include "hittable.hpp"
+#include "hittablelist.hpp"
 #include "interval.hpp"
 #include "triangle.hpp"
 
@@ -18,14 +18,14 @@ class MeshTriangle : public hittable {
 public:
   hittable_list triangles;
   double scale = 1.0f; // 缩放系数
-  std::shared_ptr<material> mat_ptr;
+  material *mat_ptr;
   aabb bbox;
 
 public:
   MeshTriangle() = default;
-  MeshTriangle(const std::string &filename, double s = 1.0f,
-      std::shared_ptr<material> m = std::make_shared<lambertian>(color(0.51765, 0.43922, 1) * 0.75))
-      : scale(s), mat_ptr(std::move(m)) {
+  MeshTriangle(
+      const std::string &filename, double s = 1.0f, material *m = new lambertian(color(1, 0.97255, 0.86275) * 0.75))
+      : scale(s), mat_ptr(m) {
     objl::Loader loader;
     loader.LoadFile(filename);
     assert(loader.LoadedMeshes.size() == 1);
@@ -42,7 +42,7 @@ public:
         face_vertices[j] = vert;
         texture[j] = tex;
       }
-      triangles.add(std::make_shared<triangle>(face_vertices, texture, mat_ptr));
+      triangles.add(std::make_unique<triangle>(face_vertices, texture, mat_ptr));
     }
     bbox = triangles.bounding_box();
   }
@@ -56,8 +56,7 @@ public:
   }
 };
 auto MeshTriangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto tree = std::make_shared<bvh_node>(triangles);
-  return tree->hit(r, ray_t, rec);
+  return triangles.hit(r, ray_t, rec);
 }
 
 auto MeshTriangle::bounding_box() const -> aabb {

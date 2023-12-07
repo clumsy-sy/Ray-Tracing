@@ -6,11 +6,11 @@
 
 class translate : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   vec3d offset;
 
 public:
-  translate(std::shared_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
+  translate(std::unique_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -34,11 +34,11 @@ auto translate::bounding_box() const -> aabb {
 
 class scale : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   vec3d vec;
 
 public:
-  scale(std::shared_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
+  scale(std::unique_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -62,13 +62,13 @@ auto scale::bounding_box() const -> aabb {
 
 class rotate_y : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_y(std::shared_ptr<hittable> p, double angle);
+  rotate_y(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -77,7 +77,7 @@ public:
   }
 };
 
-rotate_y::rotate_y(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -136,13 +136,13 @@ auto rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 
 class rotate_x : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_x(std::shared_ptr<hittable> p, double angle);
+  rotate_x(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -151,7 +151,7 @@ public:
   }
 };
 
-rotate_x::rotate_x(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -211,13 +211,13 @@ auto rotate_x::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 
 class rotate_z : public hittable {
 public:
-  std::shared_ptr<hittable> ptr;
+  std::unique_ptr<hittable> ptr;
   double sin_theta;
   double cos_theta;
   aabb bbox;
 
 public:
-  rotate_z(std::shared_ptr<hittable> p, double angle);
+  rotate_z(std::unique_ptr<hittable> p, double angle);
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -226,7 +226,7 @@ public:
   }
 };
 
-rotate_z::rotate_z(std::shared_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -263,7 +263,7 @@ auto rotate_z::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
   };
 
   auto origin = rot(r.origin());
-  auto direction =  rot(r.direction());
+  auto direction = rot(r.direction());
 
   ray rotated_r(origin, direction);
 
@@ -277,7 +277,7 @@ auto rotate_z::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
   };
   auto p = roti(rec.p);
   auto normal = roti(rec.normal);
-  
+
   rec.p = p;
   rec.set_face_normal(rotated_r, normal);
 

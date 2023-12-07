@@ -14,7 +14,7 @@ public:
   std::string photoname = "Img.bmp";
   static_assert(std::is_base_of<camerabase, Camera>::value, "Camera not derived from camerabase");
   Camera cam;
-  hittable_list world, light;
+  hittable_list &world, &light;
   double aspect_ratio = 16.0 / 9.0;
   uint32_t image_width = 1200;
   uint32_t image_height = static_cast<uint32_t>(image_width / aspect_ratio);
@@ -125,8 +125,8 @@ public:
     if (srec.skip_pdf) {
       return srec.attenuation * ray_color(srec.skip_pdf_ray, world, lights, depth - 1);
     }
-
-    auto light_ptr = std::make_shared<hittable_pdf>(lights, rec.p);
+    // std::cout << 1 << std::endl;
+    auto light_ptr = new hittable_pdf(lights, rec.p);
     mixture_pdf p(light_ptr, srec.pdf_ptr);
     ray scattered = ray(rec.p, p.generate());
     auto pdf_val = p.value(scattered.direction());

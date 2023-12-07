@@ -19,7 +19,7 @@ class quad : public hittable {
 public:
   point3 Q;
   vec3d u, v;
-  std::shared_ptr<material> mat;
+  material *mat;
   aabb bbox;
   // 用来表示这个四边形所在的平面  Ax + By + Cz = D;
   vec3d normal;
@@ -28,8 +28,7 @@ public:
   double area;
 
 public:
-  quad(point3 _Q, vec3d _u, vec3d _v, std::shared_ptr<material> m)
-      : Q(std::move(_Q)), u(std::move(_u)), v(std::move(_v)), mat(std::move(m)) {
+  quad(point3 _Q, vec3d _u, vec3d _v, material *m) : Q(std::move(_Q)), u(std::move(_u)), v(std::move(_v)), mat(m) {
     auto n = cross(u, v);
     normal = unit_vector(n);
     D = dot(normal, Q);

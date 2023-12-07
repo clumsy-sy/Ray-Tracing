@@ -11,12 +11,12 @@ class material;
   光线与物体交的记录
 */
 struct hit_record {
-  point3 p;                          // 交点坐标
-  vec3d normal;                      // 法线
-  std::shared_ptr<material> mat_ptr; // 材质
-  double t;                          // 光线的 t
-  double u, v;                       // 材质
-  bool front_face;                   // 朝向
+  point3 p;                    // 交点坐标
+  vec3d normal;                // 法线
+  material *mat_ptr = nullptr; // 材质
+  double t;                    // 光线的 t
+  double u, v;                 // 材质
+  bool front_face;             // 朝向
 
   inline void set_face_normal(const ray &r, const vec3d &outward_normal) {
     front_face = dot(r.direction(), outward_normal) < 0;
