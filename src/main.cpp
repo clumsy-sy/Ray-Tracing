@@ -31,10 +31,10 @@ auto main(int argc, const char **argv) -> int {
   Renderer<camera> renderer(*world, *light, aspect_ratio, image_width);
   renderer.set_camera(cam);
   renderer.set_photo_name(photoname);
-  renderer.set_samples_per_pixel(512);
-  renderer.set_max_depth(5);
+  renderer.set_samples_per_pixel(40000);
+  renderer.set_max_depth(10);
   renderer.set_background(background);
-  renderer.set_async_num(64);
+  renderer.set_async_num(16 * 16);
   renderer.render();
 
   return 0;

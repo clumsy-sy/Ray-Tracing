@@ -24,7 +24,7 @@ public:
 public:
   MeshTriangle() = default;
   MeshTriangle(
-      const std::string &filename, double s = 1.0f, material *m = new lambertian(color(0.51765, 0.43922, 1) * 0.75))
+      const std::string &filename, double s = 1.0f, material *m = new lambertian(color(1, 0.97255, 0.86275) * 0.75))
       : scale(s), mat_ptr(m) {
     objl::Loader loader;
     loader.LoadFile(filename);
