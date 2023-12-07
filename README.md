@@ -50,17 +50,12 @@ make build && time make run
 ## 图片展示
 
 ![Alt](images/zooImg.bmp)
-**上图信息**
-> 
-> CPU： i9-13980HX
-> 
-> 图片大小：600 * 600
-> 
-> 单像素采样数：40000
->
-> 递归深度： 10
->
-> 运行时间：25:54
 
-![Alt](images/balls_simple_400.bmp)
+**上图信息** 
+> CPU： i9-13980HX  
+> 图片大小：600 * 600  
+> 单像素采样数：40000  
+> 递归深度： 10  
+> 运行时间：25:54  
+
 ![Alt](images/checker_balls_400.bmp)
