@@ -62,14 +62,22 @@ public:
       线程任务划分：图像高度 / 线程数，计算完任务片后将线程启用并塞入队列
     */
     uint32_t block = image_height / async_num;
-    for (uint32_t ti = 0; ti != async_num; ++ti) {
-      uint32_t jl = ti * block, jr = (ti + 1) * block;
-      if (ti + 1 == async_num) // 最后的任务，防止 image_height 不能被整除
-        jr = image_height;
+    uint32_t superfluous = image_height - block * async_num;
+    for (uint32_t ti = 0, k = 0; ti != async_num; ++ti) {
+      uint32_t jl = ti * block + k, jr = (ti + 1) * block + k;
+      if (k < superfluous) {
+        jr ++, k ++;
+      }
       deque.emplace_back(std::async(std::launch::async, action, jl, jr));
     }
     // 等待各个线程都完成
     for (auto &i : deque) {
+      // 逐渐输出图片
+      // stbi_flip_vertically_on_write(true);
+      // auto data = stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
+      // if (!data) {
+      //   std::cerr << "ERROR: Could not load texture image file '" << photoname << "'.\n";
+      // }
       i.wait();
     }
     // 图像生成 set_RGB
