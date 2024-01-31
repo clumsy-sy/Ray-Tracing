@@ -10,6 +10,7 @@
 #include "../geometry/quad.hpp"
 #include "../material/diffuse_light.hpp"
 #include "../material/lambertian.hpp"
+#include "../material/metal.hpp"
 #include "../texture/image_texture.hpp"
 #include <memory>
 
@@ -70,6 +71,7 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   auto white = new lambertian(color(.73, .73, .73));
   auto green = new lambertian(color(.12, .45, .15));
   auto wlight = new diffuse_light(color(20, 20, 20));
+  auto aluminum = new metal(color(0.8, 0.85, 0.88), 0.0);
 
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));
@@ -83,7 +85,7 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   // auto aluminum = new metal(color(0.8, 0.85, 0.88), 0.0);
   // auto box1 = new box(point3(0,0,0), point3(165,330,165), aluminum);
   auto box1 = std::make_unique<translate>(
-      std::make_unique<rotate_y>(std::make_unique<box>(point3(0, 0, 0), point3(165, 330, 165), white), 15),
+      std::make_unique<rotate_y>(std::make_unique<box>(point3(0, 0, 0), point3(165, 330, 165), white), 30),
       vec3d(265, 0, 295));
   world.add(std::move(box1));
 

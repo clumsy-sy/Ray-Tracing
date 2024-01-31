@@ -52,7 +52,7 @@ public:
     auto iz = interval(std::min({v0[2], v1[2], v2[2]}), std::max({v0[2], v1[2], v2[2]}));
     return {ix, iy, iz};
   }
-
+  [[nodiscard]] auto pdf_value(const point3 &origin, const vec3d &v) const -> double override;
   friend auto operator<<(std::ostream &os, const triangle &t) -> std::ostream & {
     return os << "v0 : " << t.v0 << ", v1 " << t.v1 << ", v2 " << t.v2;
   }
@@ -104,5 +104,17 @@ auto triangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 auto triangle::bounding_box() const -> aabb {
   return bbox;
 }
+
+[[nodiscard]] auto triangle::pdf_value(const point3 &origin, const vec3d &v) const -> double {
+    printf("tri");
+    hit_record rec;
+    if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
+      return 0;
+
+    auto distance_squared = rec.t * rec.t * v.length_squared();
+    auto cosine = fabs(dot(v, rec.normal) / v.length());
+    // 三角形面积
+    return distance_squared / (cosine * 0.5 * cross(e1, e2).length());
+  }
 
 #endif

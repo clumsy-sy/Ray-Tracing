@@ -133,7 +133,7 @@ public:
     if (srec.skip_pdf) {
       return srec.attenuation * ray_color(srec.skip_pdf_ray, world, lights, depth - 1);
     }
-    // std::cout << 1 << std::endl;
+
     auto light_ptr = new hittable_pdf(lights, rec.p);
     mixture_pdf p(light_ptr, srec.pdf_ptr);
     ray scattered = ray(rec.p, p.generate());

@@ -39,7 +39,6 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override;
 
   [[nodiscard]] auto pdf_value(const point3 &o, const vec3d &v) const -> double override {
-    // This method only works for stationary spheres.
 
     hit_record rec;
     if (!this->hit(ray(o, v), interval(0.001, infinity), rec))
