@@ -4,3 +4,4 @@ cmake-build*/
 *.gch
 Img*.bmp
 *.o
+.idea/
