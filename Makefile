@@ -13,7 +13,7 @@ ${OBJ}:%.o:%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY : pbuild
-pbuild : stb_image_o stb_image_gch stb_image_write_o stb_image_write_gch objLoader vec3dx4 otherHpp
+pbuild : stb_image_o stb_image_gch stb_image_write_o stb_image_write_gch objLoader vec3dx4 otherHpp cJSON_o cJSON_gch
 
 stb_image_o: src/external/rtw_stb_image.cpp
 	$(CC) -c src/external/rtw_stb_image.cpp -o build/stb_image.o $(CFLAGS)
@@ -25,20 +25,26 @@ stb_image_write_o: src/external/rtw_stb_image_write.cpp
 stb_image_write_gch: src/external/rtw_stb_image_write.h
 	$(CC) src/external/rtw_stb_image_write.h $(CFLAGS)
 
+cJSON_o : src/external/cJSON.cpp
+	$(CC) -c src/external/cJSON.cpp -o build/cJSON.o $(CFLAGS)
+cJSON_gch: src/external/cJSON.h
+	$(CC) src/external/cJSON.h $(CFLAGS)
+
 objLoader: src/external/OBJ_Loader.hpp
-		$(CC) src/external/OBJ_Loader.hpp $(CFLAGS)
+	$(CC) src/external/OBJ_Loader.hpp $(CFLAGS)
 
 vec3dx4 : src/vector/vec3dx4.h
 	$(CC) src/vector/vec3dx4.h $(CFLAGS)
 
 otherHpp : src/external/BMP.hpp
 	$(CC) src/external/BMP.hpp $(CFLAGS)
+
 	
 
 .PHONY : build
 build : 
 	$(CC) -c src/main.cpp -o build/RayTracing.o $(CFLAGS)
-	$(CC) build/RayTracing.o build/stb_image.o build/stb_image_write.o -o build/RayTracing
+	$(CC) build/RayTracing.o build/stb_image.o build/stb_image_write.o build/cJSON.o -o build/RayTracing
 
 .PHONY : run
 run : $(TARGET)
@@ -64,7 +70,7 @@ clean:
 
 .PHONY : buildclean
 buildclean:
-	cd src/build && rm -rf *
+	cd build/ && rm -rf *
 
 .PHONY : convert
 convert:
