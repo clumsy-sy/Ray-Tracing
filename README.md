@@ -5,12 +5,16 @@
 
 ## 编译运行
 
+本项目支持 makefile 和 cmake 两种方式
+
+### makefile
+
 本项目需要支持 `-std=c++20` 的编译器，由于项目后期出现编译时间过长的情况，所以编译过程被拆分为预编译和编译两部分
 
 **预编译 && 编译**
 ```sh
 # 预编译支持多线程编译 -j[线程数]
-make pre-build -j8 && make build 
+make pbuild -j8 && make build 
 ```
 
 **运行**
@@ -23,6 +27,18 @@ make run [图片名]
 make build && time make run
 ```
 
+### cmake
+
+```sh
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
+```
+
+### 注意
+1. 可执行文件在 `/build/RayTracing` 中，但是默认运行的路径为本项目的根目录。
+2. 由于编译选项中启用了 `-march=native` 等与 `cpu` 强相关的选项，请在某平台运行前编译一遍
+
 ## 优化
 
 ### 多线程
@@ -33,7 +49,7 @@ make build && time make run
 
 并发编程非常适合这个项目，因为这个项目中大量运用了 `{double,double,double}` 的向量类型，对于两个向量之间的操作，可以通过 simd 一个指令完成，极大提升效率。代码详见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/src/vector/vec3dx4.h#L11C1-L11C1)
 
-*注意： `-march=native` 的编译指令会自动进行一部分 simd 优化*
+*注意： `-march=native` 等编译指令会自动进行一部分 simd 优化*
 
 ## 任务安排
 
