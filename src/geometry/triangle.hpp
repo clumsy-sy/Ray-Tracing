@@ -67,7 +67,8 @@ inline auto triangle::getHitPoint(double u, double v) const -> point3 {
   return (1 - u - v) * v0 + u * v1 + v * v2;
 }
 
-inline auto triangle::interpolate(double &u, double &v, vec3d &Barycentr, double weight) const -> void {
+inline auto triangle::interpolate(double &u, double &v, vec3d &Barycentr, double weight) const
+    -> void {
   u = (Barycentr[0] * t0.first + Barycentr[1] * t1.first + Barycentr[2] * t2.first);
   v = (Barycentr[0] * t0.second + Barycentr[1] * t1.second + Barycentr[2] * t2.second);
   if (weight != 1.0) {
@@ -106,15 +107,15 @@ auto triangle::bounding_box() const -> aabb {
 }
 
 [[nodiscard]] auto triangle::pdf_value(const point3 &origin, const vec3d &v) const -> double {
-    printf("tri");
-    hit_record rec;
-    if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
-      return 0;
+  printf("tri");
+  hit_record rec;
+  if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
+    return 0;
 
-    auto distance_squared = rec.t * rec.t * v.length_squared();
-    auto cosine = fabs(dot(v, rec.normal) / v.length());
-    // 三角形面积
-    return distance_squared / (cosine * 0.5 * cross(e1, e2).length());
-  }
+  auto distance_squared = rec.t * rec.t * v.length_squared();
+  auto cosine = fabs(dot(v, rec.normal) / v.length());
+  // 三角形面积
+  return distance_squared / (cosine * 0.5 * cross(e1, e2).length());
+}
 
 #endif

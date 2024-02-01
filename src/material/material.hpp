@@ -17,13 +17,16 @@ public:
 */
 class material {
 public:
-  virtual auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool = 0;
-  [[nodiscard]] virtual auto emitted([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,
-      [[maybe_unused]] double u, [[maybe_unused]] double v, [[maybe_unused]] const point3 &p) const -> color {
+  virtual auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const
+      -> bool = 0;
+  [[nodiscard]] virtual auto emitted([[maybe_unused]] const ray &r_in,
+      [[maybe_unused]] const hit_record &rec, [[maybe_unused]] double u,
+      [[maybe_unused]] double v, [[maybe_unused]] const point3 &p) const -> color {
     return {0, 0, 0};
   }
-  [[nodiscard]] virtual auto scattering_pdf([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,
-      [[maybe_unused]] const ray &scattered) const -> double {
+  [[nodiscard]] virtual auto scattering_pdf([[maybe_unused]] const ray &r_in,
+      [[maybe_unused]] const hit_record &rec, [[maybe_unused]] const ray &scattered) const
+      -> double {
     return 0;
   }
 };

@@ -28,7 +28,8 @@ public:
   double area;
 
 public:
-  quad(point3 _Q, vec3d _u, vec3d _v, material *m) : Q(std::move(_Q)), u(std::move(_u)), v(std::move(_v)), mat(m) {
+  quad(point3 _Q, vec3d _u, vec3d _v, material *m)
+      : Q(std::move(_Q)), u(std::move(_u)), v(std::move(_v)), mat(m) {
     auto n = cross(u, v);
     normal = unit_vector(n);
     D = dot(normal, Q);

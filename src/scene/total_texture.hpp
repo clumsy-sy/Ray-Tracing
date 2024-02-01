@@ -42,13 +42,16 @@ auto total_texture(hittable_list &world, hittable_list &light) -> void {
   world.add(std::make_unique<sphere>(point3(400, 400, 200), 50, sphere_material));
 
   world.add(std::make_unique<sphere>(point3(260, 150, 45), 50, new dielectric(1.5)));
-  world.add(std::make_unique<sphere>(point3(0, 150, 145), 50, new metal(color(0.8, 0.8, 0.9), 1.0)));
+  world.add(
+      std::make_unique<sphere>(point3(0, 150, 145), 50, new metal(color(0.8, 0.8, 0.9), 1.0)));
 
   world.add(std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)));
   world.add(std::make_unique<constant_medium>(
-      std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)), 0.2, color(0.2, 0.4, 0.9)));
+      std::make_unique<sphere>(point3(360, 150, 145), 70, new dielectric(1.5)), 0.2,
+      color(0.2, 0.4, 0.9)));
   world.add(std::make_unique<constant_medium>(
-      std::make_unique<sphere>(point3(0, 0, 0), 5000, new dielectric(1.5)), .0001, color(1, 1, 1)));
+      std::make_unique<sphere>(point3(0, 0, 0), 5000, new dielectric(1.5)), .0001,
+      color(1, 1, 1)));
 
   auto emat = new lambertian(new image_texture("src/models/earth/earthmap.jpg"));
   world.add(std::make_unique<sphere>(point3(400, 200, 400), 100, emat));
@@ -63,7 +66,8 @@ auto total_texture(hittable_list &world, hittable_list &light) -> void {
   }
 
   world.add(std::make_unique<translate>(
-      std::make_unique<rotate_y>(std::make_unique<bvh_node>(boxes2), 15), vec3d(-100, 270, 395)));
+      std::make_unique<rotate_y>(std::make_unique<bvh_node>(boxes2), 15),
+      vec3d(-100, 270, 395)));
 }
 
 #endif

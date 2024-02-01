@@ -15,7 +15,8 @@ public:
   isotropic(color c) : albedo(new solid_color(c)) {}
   isotropic(texture *a) : albedo(a) {}
 
-  auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
+  auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec,
+      scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
     // std::cout << 3 << std::endl;
     srec.pdf_ptr = new sphere_pdf();
@@ -25,8 +26,9 @@ public:
     srec.skip_pdf = false;
     return true;
   }
-  [[nodiscard]] auto scattering_pdf([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec,
-      [[maybe_unused]] const ray &scattered) const -> double override {
+  [[nodiscard]] auto scattering_pdf([[maybe_unused]] const ray &r_in,
+      [[maybe_unused]] const hit_record &rec, [[maybe_unused]] const ray &scattered) const
+      -> double override {
     return 1 / (4 * PI);
   }
 };

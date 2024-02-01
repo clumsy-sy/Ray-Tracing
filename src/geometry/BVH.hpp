@@ -5,10 +5,14 @@
 #include "hittablelist.hpp"
 #include "interval.hpp"
 
-inline auto box_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b, int axis) -> bool;
-inline auto box_x_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
-inline auto box_y_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
-inline auto box_z_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
+inline auto box_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b, int axis) -> bool;
+inline auto box_x_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
+inline auto box_y_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
+inline auto box_z_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool;
 
 /*
   BVH 的结点（也是可背光线击中的）
@@ -30,7 +34,8 @@ public:
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
 };
-bvh_node::bvh_node(std::vector<std::unique_ptr<hittable>> &src_objects, size_t start, size_t end) {
+bvh_node::bvh_node(
+    std::vector<std::unique_ptr<hittable>> &src_objects, size_t start, size_t end) {
   auto &objects = src_objects; // Create a modifiable array of the source scene objects
   // 随机一个轴，按这个轴排序
   int axis = random_int(0, 2)();
@@ -80,16 +85,20 @@ auto bvh_node::bounding_box() const -> aabb {
 }
 
 // sort cmp
-inline auto box_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b, int axis) -> bool {
+inline auto box_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b, int axis) -> bool {
   return a->bounding_box().axis[axis].min < b->bounding_box().axis[axis].min;
 }
-inline auto box_x_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
+inline auto box_x_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
   return box_compare(a, b, 0);
 }
-inline auto box_y_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
+inline auto box_y_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
   return box_compare(a, b, 1);
 }
-inline auto box_z_compare(const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
+inline auto box_z_compare(
+    const std::unique_ptr<hittable> &a, const std::unique_ptr<hittable> &b) -> bool {
   return box_compare(a, b, 2);
 }
 

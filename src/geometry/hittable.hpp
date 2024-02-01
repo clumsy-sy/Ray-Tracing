@@ -28,8 +28,8 @@ class hittable {
 public:
   virtual auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool = 0;
   [[nodiscard]] virtual auto bounding_box() const -> aabb = 0;
-  [[nodiscard]] virtual auto pdf_value([[maybe_unused]] const point3 &o, [[maybe_unused]] const vec3d &v) const
-      -> double {
+  [[nodiscard]] virtual auto pdf_value(
+      [[maybe_unused]] const point3 &o, [[maybe_unused]] const vec3d &v) const -> double {
     return 0.0;
   }
 

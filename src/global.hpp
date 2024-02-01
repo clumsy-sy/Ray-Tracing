@@ -37,7 +37,7 @@ inline auto random_double() -> double {
   // thread_local std::mt19937 generator(10085);
   return distribution(generator);
 }
-inline auto random_double(double min, double max) -> auto{
+inline auto random_double(double min, double max) -> auto {
   return [min, max]() -> double {
     thread_local std::uniform_real_distribution<double> distribution(min, max);
     thread_local std::mt19937 generator{std::random_device{}()};
@@ -45,7 +45,7 @@ inline auto random_double(double min, double max) -> auto{
     return distribution(generator);
   };
 }
-inline auto random_int(int min, int max) -> auto{
+inline auto random_int(int min, int max) -> auto {
   return [min, max]() -> int {
     thread_local std::uniform_int_distribution<> distribution(min, max);
     thread_local std::mt19937 generator{std::random_device{}()};
@@ -63,7 +63,8 @@ inline auto clamp(const double &x, const double &min, const double &max) -> doub
 }
 
 // 求根公式
-inline auto solveQuadratic(const double &a, const double &b, const double &c, double &x0, double &x1) -> bool {
+inline auto solveQuadratic(
+    const double &a, const double &b, const double &c, double &x0, double &x1) -> bool {
   double discr = b * b - 4 * a * c;
   if (discr < 0)
     return false;
@@ -79,8 +80,8 @@ inline auto solveQuadratic(const double &a, const double &b, const double &c, do
   return true;
 }
 // b = 2 * h 情况下的求根公式
-inline auto solveQuadratic_halfb(const double &a, const double &half_b, const double &c, double &x0, double &x1)
-    -> bool {
+inline auto solveQuadratic_halfb(
+    const double &a, const double &half_b, const double &c, double &x0, double &x1) -> bool {
   double discr = half_b * half_b - a * c;
   if (discr < 0)
     return false;

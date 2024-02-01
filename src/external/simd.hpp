@@ -223,94 +223,112 @@ template <class T>
 constexpr bool is_simd_or_scalar = std::is_arithmetic<T>::value || is_simd<T>;
 
 // Binary operators
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator+(const T &x, const V &y) -> R {
   return R(x).r + R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator-(const T &x, const V &y) -> R {
   return R(x).r - R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator*(const T &x, const V &y) -> R {
   return R(x).r * R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator/(const T &x, const V &y) -> R {
   return R(x).r / R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator%(const T &x, const V &y) -> R {
   return R(x).r % R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator&&(const T &x, const V &y) -> R {
   return R(x).r && R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator||(const T &x, const V &y) -> R {
   return R(x).r || R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator&(const T &x, const V &y) -> R {
   return R(x).r & R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator|(const T &x, const V &y) -> R {
   return R(x).r | R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator^(const T &x, const V &y) -> R {
   return R(x).r ^ R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator<<(const T &x, const V &y) -> R {
   return R(x).r << R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>>
 constexpr auto operator>>(const T &x, const V &y) -> R {
   return R(x).r >> R(y).r;
 }
 
 // Comparison operators
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator==(const T &x, const V &y) -> M {
   return R(x).r == R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator!=(const T &x, const V &y) -> M {
   return R(x).r != R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator<(const T &x, const V &y) -> M {
   return R(x).r < R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator<=(const T &x, const V &y) -> M {
   return R(x).r <= R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator>(const T &x, const V &y) -> M {
   return R(x).r > R(y).r;
 }
-template <class T, class V, class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
+template <class T, class V,
+    class E = std::enable_if_t<is_simd_or_scalar<T> && is_simd_or_scalar<V>>,
     class R = std::common_type_t<T, V>, class M = typename R::int_type>
 constexpr auto operator>=(const T &x, const V &y) -> M {
   return R(x).r >= R(y).r;

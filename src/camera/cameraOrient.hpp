@@ -5,7 +5,8 @@
 
 class cameraOrient : public camerabase {
 public:
-  cameraOrient(const point3 &lookfrom, const point3 &lookat, const vec3d &vup, double vfov, double aspect_ratio) {
+  cameraOrient(const point3 &lookfrom, const point3 &lookat, const vec3d &vup, double vfov,
+      double aspect_ratio) {
     auto theta = degrees_to_radians(vfov);
     auto h = tan(theta / 2);
     auto viewport_height = 2.0 * h;

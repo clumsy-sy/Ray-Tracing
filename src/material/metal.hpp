@@ -16,7 +16,8 @@ public:
   }
   metal(color a, double f) : albedo(std::move(a)), fuzz(f < 1 ? f : 1) {}
 
-  auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
+  auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const
+      -> bool override {
     srec.attenuation = albedo;
     srec.pdf_ptr = nullptr;
     srec.skip_pdf = true;

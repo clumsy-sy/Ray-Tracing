@@ -82,7 +82,8 @@ private:
   point3 origin;
 
 public:
-  hittable_pdf(const hittable &_objects, point3 _origin) : objects(_objects), origin(std::move(_origin)) {}
+  hittable_pdf(const hittable &_objects, point3 _origin)
+      : objects(_objects), origin(std::move(_origin)) {}
 
   [[nodiscard]] auto value(const vec3d &direction) const -> double override {
     return objects.pdf_value(origin, direction);

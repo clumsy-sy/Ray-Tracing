@@ -76,10 +76,10 @@ public:
   [[nodiscard]] auto hit_old(const ray &r, interval ray_t) const -> bool {
     // 判断光线 与 AABB 是否相交，判断与三个面的交面，是否有重合
     for (int i = 0; i < 3; i++) {
-      auto t0 =
-          std::min((axis[i].min - r.origin()[i]) / r.direction()[i], (axis[i].max - r.origin()[i]) / r.direction()[i]);
-      auto t1 =
-          std::max((axis[i].min - r.origin()[i]) / r.direction()[i], (axis[i].max - r.origin()[i]) / r.direction()[i]);
+      auto t0 = std::min((axis[i].min - r.origin()[i]) / r.direction()[i],
+          (axis[i].max - r.origin()[i]) / r.direction()[i]);
+      auto t1 = std::max((axis[i].min - r.origin()[i]) / r.direction()[i],
+          (axis[i].max - r.origin()[i]) / r.direction()[i]);
       ray_t.min = std::max(t0, ray_t.min);
       ray_t.max = std::min(t1, ray_t.max);
       if (ray_t.max <= ray_t.min)

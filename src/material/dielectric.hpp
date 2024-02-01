@@ -12,7 +12,8 @@ public:
 public:
   dielectric(double index_of_refraction) : ir(index_of_refraction) {}
 
-  auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const -> bool override {
+  auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const
+      -> bool override {
     srec.attenuation = color(1.0, 1.0, 1.0);
     srec.pdf_ptr = nullptr;
     srec.skip_pdf = true;

@@ -18,8 +18,9 @@ public:
     return false;
   }
 
-  [[nodiscard]] auto emitted([[maybe_unused]] const ray &r_in, [[maybe_unused]] const hit_record &rec, double u,
-      double v, [[maybe_unused]] const point3 &p) const -> color override {
+  [[nodiscard]] auto emitted([[maybe_unused]] const ray &r_in,
+      [[maybe_unused]] const hit_record &rec, double u, double v,
+      [[maybe_unused]] const point3 &p) const -> color override {
     if (!rec.front_face)
       return {0, 0, 0};
     return emit->value(u, v, p);

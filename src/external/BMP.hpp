@@ -48,7 +48,8 @@ public:
     return image[y * width + x];
   }
   auto set(int x, int y, const color &pixel_color) {
-    image[y * width + x] = {static_cast<unsigned char>(255.999 * clamp(pixel_color.z(), 0.0, 0.999)),
+    image[y * width + x] = {
+        static_cast<unsigned char>(255.999 * clamp(pixel_color.z(), 0.0, 0.999)),
         static_cast<unsigned char>(255.999 * clamp(pixel_color.y(), 0.0, 0.999)),
         static_cast<unsigned char>(255.999 * clamp(pixel_color.x(), 0.0, 0.999))};
   }
@@ -59,7 +60,8 @@ public:
     // gamma Correction to accurate color intensity
     pixel_color.sqrt(); // 变亮
     // Write the translated [0,255] value of each color component.
-    image[y * width + x] = {static_cast<unsigned char>(256 * clamp(pixel_color.z(), 0.0, 0.999)),
+    image[y * width + x] = {
+        static_cast<unsigned char>(256 * clamp(pixel_color.z(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.y(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.x(), 0.0, 0.999))};
   }
@@ -70,7 +72,8 @@ public:
     // gamma Correction to accurate color intensity
     pixel_color.sqrt(); // 变亮
     // Write the translated [0,255] value of each color component.
-    image[y * width + x] = {static_cast<unsigned char>(256 * clamp(pixel_color.x(), 0.0, 0.999)),
+    image[y * width + x] = {
+        static_cast<unsigned char>(256 * clamp(pixel_color.x(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.y(), 0.0, 0.999)),
         static_cast<unsigned char>(256 * clamp(pixel_color.z(), 0.0, 0.999))};
   }

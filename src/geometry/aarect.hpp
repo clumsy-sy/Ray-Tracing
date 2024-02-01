@@ -27,8 +27,8 @@ public:
     return random_point - origin;
   }
   friend auto operator<<(std::ostream &os, const xy_rect &m) -> std::ostream & {
-    os << "[xy_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  y0 - y1 : " << m.y0 << " ~ " << m.y1 << " z : " << m.k
-       << "\n";
+    os << "[xy_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  y0 - y1 : " << m.y0 << " ~ "
+       << m.y1 << " z : " << m.k << "\n";
     return os;
   }
 };
@@ -74,8 +74,8 @@ public:
     return random_point - origin;
   }
   friend auto operator<<(std::ostream &os, const xz_rect &m) -> std::ostream & {
-    os << "[xz_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  z0 - z1 : " << m.z0 << " ~ " << m.z1 << " y : " << m.k
-       << "\n";
+    os << "[xz_rect]| x0 - x1 : " << m.x0 << " ~ " << m.x1 << "  z0 - z1 : " << m.z0 << " ~ "
+       << m.z1 << " y : " << m.k << "\n";
     return os;
   }
 };
@@ -121,8 +121,8 @@ public:
     return random_point - origin;
   }
   friend auto operator<<(std::ostream &os, const yz_rect &m) -> std::ostream & {
-    os << "[yz_rect]| y0 - y1 : " << m.y0 << " ~ " << m.y1 << "  z0 - z1 : " << m.z0 << " ~ " << m.z1 << " x : " << m.k
-       << "\n";
+    os << "[yz_rect]| y0 - y1 : " << m.y0 << " ~ " << m.y1 << "  z0 - z1 : " << m.z0 << " ~ "
+       << m.z1 << " x : " << m.k << "\n";
     return os;
   }
 };

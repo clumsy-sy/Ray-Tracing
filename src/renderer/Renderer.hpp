@@ -12,7 +12,8 @@ template <class Camera>
 class Renderer {
 public:
   std::string photoname = "Img.bmp";
-  static_assert(std::is_base_of<camerabase, Camera>::value, "Camera not derived from camerabase");
+  static_assert(
+      std::is_base_of<camerabase, Camera>::value, "Camera not derived from camerabase");
   Camera cam;
   hittable_list &world, &light;
   double aspect_ratio = 16.0 / 9.0;
@@ -66,7 +67,7 @@ public:
     for (uint32_t ti = 0, k = 0; ti != async_num; ++ti) {
       uint32_t jl = ti * block + k, jr = (ti + 1) * block + k;
       if (k < superfluous) {
-        jr ++, k ++;
+        jr++, k++;
       }
       deque.emplace_back(std::async(std::launch::async, action, jl, jr));
     }
@@ -74,15 +75,16 @@ public:
     for (auto &i : deque) {
       // 逐渐输出图片
       // stbi_flip_vertically_on_write(true);
-      // auto data = stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
-      // if (!data) {
+      // auto data = stbi_write_bmp(photoname.c_str(), image_width, image_height, 3,
+      // photo.image.data()); if (!data) {
       //   std::cerr << "ERROR: Could not load texture image file '" << photoname << "'.\n";
       // }
       i.wait();
     }
     // 图像生成 set_RGB
     stbi_flip_vertically_on_write(true);
-    auto data = stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
+    auto data =
+        stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
     if (!data) {
       std::cerr << "ERROR: Could not load texture image file '" << photoname << "'.\n";
     }
@@ -116,7 +118,8 @@ public:
     return res;
   }
   // 发射光线返回得到颜色
-  auto ray_color(const ray &r, const hittable &world, const hittable &lights, int depth) -> color {
+  auto ray_color(const ray &r, const hittable &world, const hittable &lights, int depth)
+      -> color {
     // 递归次数限制
     if (depth <= 0)
       return {0, 0, 0};

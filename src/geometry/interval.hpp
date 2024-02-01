@@ -10,7 +10,8 @@ public:
   interval() : min(+infinity), max(-infinity) {} // Default interval is empty
   interval(double num) : min(num), max(num) {}
   interval(double _min, double _max) : min(_min), max(_max) {}
-  interval(const interval &a, const interval &b) : min(std::min(a.min, b.min)), max(std::max(a.max, b.max)) {}
+  interval(const interval &a, const interval &b)
+      : min(std::min(a.min, b.min)), max(std::max(a.max, b.max)) {}
 
   [[nodiscard]] auto size() const -> double {
     return max - min;

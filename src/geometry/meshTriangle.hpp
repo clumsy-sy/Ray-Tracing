@@ -23,8 +23,8 @@ public:
 
 public:
   MeshTriangle() = default;
-  MeshTriangle(
-      const std::string &filename, double s = 1.0f, material *m = new lambertian(color(1, 0.97255, 0.86275) * 0.75))
+  MeshTriangle(const std::string &filename, double s = 1.0f,
+      material *m = new lambertian(color(1, 0.97255, 0.86275) * 0.75))
       : scale(s), mat_ptr(m) {
     objl::Loader loader;
     loader.LoadFile(filename);
@@ -35,10 +35,11 @@ public:
       std::array<vec3d, 3> face_vertices;
       std::array<pdd, 3> texture;
       for (int j = 0; j < 3; j++) {
-        auto vert =
-            vec3d(mesh.Vertices[i + j].Position.X, mesh.Vertices[i + j].Position.Y, mesh.Vertices[i + j].Position.Z) *
-            scale;
-        auto tex = std::make_pair(mesh.Vertices[i + j].TextureCoordinate.X, mesh.Vertices[i + j].TextureCoordinate.Y);
+        auto vert = vec3d(mesh.Vertices[i + j].Position.X, mesh.Vertices[i + j].Position.Y,
+                        mesh.Vertices[i + j].Position.Z) *
+                    scale;
+        auto tex = std::make_pair(
+            mesh.Vertices[i + j].TextureCoordinate.X, mesh.Vertices[i + j].TextureCoordinate.Y);
         face_vertices[j] = vert;
         texture[j] = tex;
       }

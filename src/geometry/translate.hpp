@@ -10,7 +10,8 @@ public:
   vec3d offset;
 
 public:
-  translate(std::unique_ptr<hittable> p, vec3d displacement) : ptr(std::move(p)), offset(std::move(displacement)) {}
+  translate(std::unique_ptr<hittable> p, vec3d displacement)
+      : ptr(std::move(p)), offset(std::move(displacement)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
@@ -38,7 +39,8 @@ public:
   vec3d vec;
 
 public:
-  scale(std::unique_ptr<hittable> p, vec3d coefficient) : ptr(std::move(p)), vec(std::move(coefficient)) {}
+  scale(std::unique_ptr<hittable> p, vec3d coefficient)
+      : ptr(std::move(p)), vec(std::move(coefficient)) {}
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 

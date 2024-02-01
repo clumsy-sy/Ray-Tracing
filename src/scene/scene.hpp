@@ -10,8 +10,9 @@
 #include "total_texture.hpp"
 #include "zoo.hpp"
 
-inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &light, double &aspect_ratio,
-    int &image_width, double &vfov, point3 &lookfrom, point3 &lookat, color &background) -> void {
+inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &light,
+    double &aspect_ratio, int &image_width, double &vfov, point3 &lookfrom, point3 &lookat,
+    color &background) -> void {
   // lookfrom = point3(13, 2, 3);
   lookfrom = point3(13, 3, 3);
   lookat = point3(0, 0, 0);
