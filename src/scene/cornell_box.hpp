@@ -74,27 +74,30 @@ auto cornell_box(hittable_list &world, hittable_list &light) -> void {
 }
 
 auto cornell_box_rotate(hittable_list &world, hittable_list &light) -> void {
-  hittable_list boxbox;
   auto red = new lambertian(color(.65, .05, .05));
   auto white = new lambertian(color(.73, .73, .73));
   auto green = new lambertian(color(.12, .45, .15));
   auto wlight = new diffuse_light(color(15, 15, 15));
 
-  boxbox.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
-  boxbox.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));
-  light.add(std::make_unique<xz_rect>(213, 343, 227, 332, 554, wlight));
-  boxbox.add(std::make_unique<xz_rect>(0, 555, 0, 555, 0, white));
-  boxbox.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
-  boxbox.add(std::make_unique<xy_rect>(0, 555, 0, 555, 555, white));
+  world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
+  world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));
+  auto m = nullptr;
+  light.add(
+      std::make_unique<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), m));
+  world.add(std::make_unique<quad>(
+      point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), wlight));
+  // light.add(new xz_rect(213, 343, 227, 332, 554, wlight));
+  world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 0, white));
+  world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
+  world.add(std::make_unique<xy_rect>(0, 555, 0, 555, 555, white));
 
   auto box1 = std::make_unique<box>(point3(0, 0, 0), point3(165, 330, 165), white);
   auto box11 = std::make_unique<rotate_y>(std::move(box1), 15);
-  boxbox.add(std::make_unique<translate>(std::move(box11), vec3d(265, 0, 295)));
+  world.add(std::make_unique<translate>(std::move(box11), vec3d(265, 0, 295)));
 
   auto box2 = std::make_unique<box>(point3(0, 0, 0), point3(165, 165, 165), white);
   auto box22 = std::make_unique<rotate_y>(std::move(box2), -18);
-  boxbox.add(std::make_unique<translate>(std::move(box22), vec3d(130, 0, 65)));
-  world.add(std::make_unique<bvh_node>(boxbox));
+  world.add(std::make_unique<translate>(std::move(box22), vec3d(130, 0, 65)));
 }
 
 auto cornell_smoke(hittable_list &world, hittable_list &light) -> void {
@@ -102,14 +105,20 @@ auto cornell_smoke(hittable_list &world, hittable_list &light) -> void {
   auto red = new lambertian(color(.65, .05, .05));
   auto white = new lambertian(color(.73, .73, .73));
   auto green = new lambertian(color(.12, .45, .15));
-  auto wlight = new diffuse_light(color(7, 7, 7));
+  auto wlight = new diffuse_light(color(15, 15, 15));
 
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));
-  light.add(std::make_unique<xz_rect>(113, 443, 127, 432, 554, wlight));
-  world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
+  auto m = nullptr;
+  light.add(
+      std::make_unique<quad>(point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), m));
+  world.add(std::make_unique<quad>(
+      point3(343, 554, 332), vec3d(-130, 0, 0), vec3d(0, 0, -105), wlight));
+  // light.add(new xz_rect(213, 343, 227, 332, 554, wlight));
   world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 0, white));
+  world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
   world.add(std::make_unique<xy_rect>(0, 555, 0, 555, 555, white));
+
 
   auto box1 = std::make_unique<translate>(
       std::make_unique<rotate_y>(

@@ -27,6 +27,15 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return boundary->bounding_box();
   }
+  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+    os << prefix << "[const_med]: neg_inv_density = " << neg_inv_density;
+    boundary->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const constant_medium &m) -> std::ostream & {
+    os << "[const_med]: neg_inv_density = " << m.neg_inv_density;
+    m.boundary->print(os);
+    return os;
+  }
 };
 
 auto constant_medium::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {

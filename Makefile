@@ -40,11 +40,12 @@ otherHpp : src/external/BMP.hpp
 	$(CC) src/external/BMP.hpp $(CFLAGS)
 
 	
-
 .PHONY : build
 build : 
 	$(CC) -c src/main.cpp -o build/RayTracing.o $(CFLAGS)
 	$(CC) build/RayTracing.o build/stb_image.o build/stb_image_write.o build/cJSON.o -o build/RayTracing
+
+
 
 .PHONY : run
 run : $(TARGET)

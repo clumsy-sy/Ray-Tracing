@@ -50,6 +50,7 @@ public:
     auto action = [&](uint32_t jl, uint32_t jr) -> void {
       for (uint32_t j = jl; j < jr; ++j) {
         for (uint32_t i = 0; i < image_width; ++i) {
+          std::cout << "pixel[ " << i << ", " << j <<" ]\n"; 
           color pixel_color = simple_random_sampling(i, j);
           // color pixel_color = sqrt_random_sampling(i, j);
           photo.set_RGB(i, j, pixel_color, samples_per_pixel);
@@ -136,8 +137,8 @@ public:
     if (srec.skip_pdf) {
       return srec.attenuation * ray_color(srec.skip_pdf_ray, world, lights, depth - 1);
     }
-
     auto light_ptr = new hittable_pdf(lights, rec.p);
+
     mixture_pdf p(light_ptr, srec.pdf_ptr);
     ray scattered = ray(rec.p, p.generate());
     auto pdf_val = p.value(scattered.direction());
@@ -148,6 +149,18 @@ public:
     color color_from_scatter = (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
 
     return color_from_emission + color_from_scatter;
+  }
+  friend auto operator<<(std::ostream &os, const Renderer &r) -> std::ostream & {
+    os << "[Renderer] : " << r.photoname << " [width] = " << r.image_width << " [height] = " << r.image_height << "\n";
+    os << "           | [async_num] = " << r.async_num << " [pps] = " << r.samples_per_pixel << " [depth] = " <<r.max_depth << "\n";
+    if(r.light.objects.size() != 0 || r.background != color(0,0,0)) {
+      os << "           | right source = true ";
+    }
+    if(r.world.objects.size() != 0) {
+      os << " object = exist\n";
+    }
+    os << "--------------------------------------------------\n";
+    return os;
   }
 };
 

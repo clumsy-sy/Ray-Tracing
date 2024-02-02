@@ -1,3 +1,7 @@
+/**
+ * @file metal.hpp
+ * @brief 金属材质
+ */
 #ifndef METAL_HPP
 #define METAL_HPP
 

@@ -49,6 +49,14 @@ public:
   }
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
+  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+    os << prefix;
+    auto now_prefix = prefix + "|-";
+    for (auto const &t : triangles.objects) {
+      t->print(os, now_prefix);
+      os << "\n";
+    }
+  }
   friend auto operator<<(std::ostream &os, const MeshTriangle &m) -> std::ostream & {
     for (auto const &t : m.triangles.objects) {
       os << t << "\n";

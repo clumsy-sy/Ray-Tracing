@@ -3,26 +3,32 @@
 
 #include "../geometry/hittablelist.hpp"
 #include "balls_world.hpp"
-#include "checker_balls.hpp"
 #include "cornell_box.hpp"
 #include "simple_light.hpp"
 #include "test_scene.hpp"
 #include "total_texture.hpp"
 #include "zoo.hpp"
+#include <cstdint>
 
 inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &light,
-    double &aspect_ratio, int &image_width, double &vfov, point3 &lookfrom, point3 &lookat,
+    double &aspect_ratio, uint32_t &image_width, double &vfov, point3 &lookfrom, point3 &lookat,
     color &background) -> void {
   // lookfrom = point3(13, 2, 3);
-  lookfrom = point3(13, 3, 3);
-  lookat = point3(0, 0, 0);
-  background = color(0.70, 0.80, 1.00);
+  
 
   switch (opt) {
   case 1:
+    lookfrom = point3(13, 3, 3);
+    lookat = point3(0, 0, 0);
+    background = color(0.70, 0.80, 1.00);
+    aspect_ratio = 3.0 / 2.0;
+    vfov = 40;
     random_balls_world(world, light);
     break;
   case 2:
+    lookfrom = point3(13, 3, 3);
+    lookat = point3(0, 0, 0);
+    background = color(0.70, 0.80, 1.00);
     random_checkerANDballs(world, light);
     break;
   case 3:

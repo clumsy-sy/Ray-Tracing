@@ -106,8 +106,11 @@ public:
     auto p = Q + (random_double() * u) + (random_double() * v);
     return p - origin;
   }
+  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+    os << prefix << "[Quad]|Ori=" << Q << " u=" << u << " v=" << v;
+  }
   friend auto operator<<(std::ostream &os, const quad &m) -> std::ostream & {
-    os << "[Quad]| Q : " << m.Q << " u :" << m.u << " v: " << m.v << "\n";
+    os << "[Quad]|Ori=" << m.Q << " u=" << m.u << " v=" << m.v;
     return os;
   }
 };

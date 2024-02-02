@@ -21,6 +21,15 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return ptr->bounding_box();
   }
+  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+    os << prefix <<  "[flip_face]: ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const flip_face &m) -> std::ostream & {
+    os << "[flip_face]: ";
+    m.ptr->print(os);
+    return os;
+  }
 };
 
 #endif

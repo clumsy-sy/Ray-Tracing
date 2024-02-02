@@ -52,7 +52,7 @@ public:
     printf("          | vfov: %5.3lf, theta: %5.3lf,h: %5.3lf, viewport_height: %5.3lf, "
            "viewport_width: % 5.3f\n",
         vfov, theta, h, viewport_height, viewport_width);
-    printf("----------------------------------------\n");
+    printf("--------------------------------------------------\n");
 #endif
   }
   [[nodiscard]] auto get_ray(double s, double t) const -> ray override {

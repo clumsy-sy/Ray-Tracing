@@ -33,6 +33,51 @@ public:
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
+  auto printTree(std::ostream& os, const bvh_node &m, int type, const std::string& prefix = "") -> void {
+    if(type == 0) {
+      os << prefix << "└─ root\n";
+    } else if(type == 1) {
+      os << prefix << "└─ left\n";
+    } else {
+      os << prefix << "└─ right\n";
+    }
+
+    if(m.left != nullptr) {
+      std::string childPrefix = prefix + "   ";
+      m.left->print(os);
+    } 
+    if(m.right != nullptr) {
+      std::string childPrefix = prefix + "│  ";
+      m.right->print(os);
+    } 
+
+    // for (size_t i = 0; i < node.children.size(); ++i) {
+    //     const Node& child = node.children[i];
+    //     std::string childPrefix = prefix + (i == node.children.size() - 1 ? "   " : "│  ");
+    //     printTree(child, childPrefix);
+    // }
+}
+  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+    os << prefix << "|--[bvh_node]\n";
+    auto left_prefix = prefix + "L";
+    if(left != nullptr)
+      left->print(os, left_prefix);
+    else os << "null";
+    os << "\n";
+    auto right_prefix = prefix + "R";
+    if(right != nullptr)
+      right->print(os, right_prefix);
+    else os << "null";
+  }
+  friend auto operator<<(std::ostream &os, const bvh_node &m) -> std::ostream & {
+    os << "|--[bvh_node]\n";
+    std::string prefix_l = "L";
+    m.left->print(os, prefix_l);
+    os << "\n";
+    std::string prefix_r = "R";
+    m.right->print(os, prefix_r);
+    return os;
+  }
 };
 bvh_node::bvh_node(
     std::vector<std::unique_ptr<hittable>> &src_objects, size_t start, size_t end) {
