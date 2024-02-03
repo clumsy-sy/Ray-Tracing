@@ -45,13 +45,13 @@ public:
   [[nodiscard]] virtual auto random([[maybe_unused]] const vec3d &o) const -> vec3d {
     return {1, 0, 0};
   }
-  virtual auto print(std::ostream& os, const std::string& prefix = "") const -> void = 0;
+  virtual auto print(std::ostream &os, const std::string &prefix = "") const -> void = 0;
   virtual ~hittable() = default;
 };
 
-auto operator<<(std::ostream& os, const hittable& obj) -> std::ostream& {
-    obj.print(os);
-    return os;
+auto operator<<(std::ostream &os, const hittable &obj) -> std::ostream & {
+  obj.print(os);
+  return os;
 }
 
 #endif

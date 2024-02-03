@@ -10,7 +10,7 @@
 
 /**
  * @class ray
- * @brief 光线 ray {origin, direction} 
+ * @brief 光线 ray {origin, direction}
  */
 class ray {
 private:

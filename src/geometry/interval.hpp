@@ -1,7 +1,7 @@
 /**
  * @file interval.hpp
  * @brief 一个控制范围的类
- * 
+ *
  */
 #ifndef INTERVAL_HPP
 #define INTERVAL_HPP
@@ -10,7 +10,7 @@
 /**
  * @class interval
  * @brief [min, max] 控制范围
- * 
+ *
  */
 class interval {
 public:

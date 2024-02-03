@@ -1,7 +1,7 @@
 /**
  * @file material.hpp
  * @brief 材质基类
- * 
+ *
  */
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
@@ -13,7 +13,7 @@ struct hit_record;
 /**
  * @class scatter_record
  * @brief 记录散射
- * 
+ *
  */
 class scatter_record {
 public:

@@ -57,7 +57,7 @@ public:
     auto p = v0 + (random_double() * e1) + (random_double() * e2);
     return p - origin;
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[Tri]{" << v0 << "," << v1 << "," << v2 << "}";
   }
   friend auto operator<<(std::ostream &os, const triangle &t) -> std::ostream & {

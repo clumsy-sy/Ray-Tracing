@@ -10,11 +10,10 @@
 #include "ONB.hpp"
 #include "hittable.hpp"
 
-
 /**
  * @class sphere
- * @brief 光线 sphere {center, radius, material}  
- * 
+ * @brief 光线 sphere {center, radius, material}
+ *
  */
 class sphere : public hittable {
 
@@ -33,7 +32,9 @@ public:
   };
 
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
-  [[nodiscard]] auto bounding_box() const -> aabb override { return bbox; };
+  [[nodiscard]] auto bounding_box() const -> aabb override {
+    return bbox;
+  };
 
   [[nodiscard]] auto pdf_value(const point3 &o, const vec3d &v) const -> double override {
 
@@ -54,15 +55,15 @@ public:
     uvw.build_from_w(direction);
     return uvw.local(random_to_sphere(radius, distance_squared));
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[Sphere]{" << center << ",r=" << radius << "}";
   }
   friend auto operator<<(std::ostream &os, const sphere &m) -> std::ostream & {
     os << "[Sphere]{" << m.center << ",r=" << m.radius << "}";
     return os;
   }
-private:
 
+private:
   /**
    * @brief 获得纹理坐标
    * @param p 需要映射的点
@@ -81,7 +82,6 @@ private:
     u = phi / (2 * PI);
     v = theta / PI;
   }
-
 };
 
 auto sphere::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {

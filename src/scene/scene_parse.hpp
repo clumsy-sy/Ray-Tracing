@@ -31,14 +31,15 @@ private:
   double vfov;
   double aperture;
   // render parms
-  hittable_list* world;
-  hittable_list* light;
+  hittable_list *world;
+  hittable_list *light;
   color background;
   std::uint32_t pps;
   std::uint32_t threads;
   std::unique_ptr<Renderer<camera>> renderer;
   // json parse
   cJSON *root;
+
 private:
   auto parse_scene_id() -> void;
   auto parse_image_name() -> void;
@@ -54,7 +55,7 @@ private:
   auto parse_threads() -> void;
 
 public:
-  scene(){
+  scene() {
     world = new hittable_list();
     light = new hittable_list();
   }
@@ -67,9 +68,9 @@ auto scene::parse_scene_id() -> void {
   auto item = cJSON_GetObjectItem(root, "scene_id");
   if (item != nullptr) {
     scene_id = item->valueint;
-    #ifdef LOG
-      std::cout << "[scene id]:" << scene_id << "\n";
-    #endif
+#ifdef LOG
+    std::cout << "[scene id]:" << scene_id << "\n";
+#endif
   } else {
     scene_id = -1;
   }
@@ -78,9 +79,9 @@ auto scene::parse_image_name() -> void {
   auto item = cJSON_GetObjectItem(root, "image_name");
   if (item != nullptr) {
     image_name = item->valuestring;
-    #ifdef LOG
-      std::cout << "[img name]: " << image_name << "\n";
-    #endif
+#ifdef LOG
+    std::cout << "[img name]: " << image_name << "\n";
+#endif
   } else {
     image_name = "img.bmp";
   }
@@ -89,7 +90,7 @@ auto scene::parse_image_size() -> void {
   auto width = cJSON_GetObjectItem(root, "width");
   auto height = cJSON_GetObjectItem(root, "height");
   auto ratio = cJSON_GetObjectItem(root, "ratio");
-  if(width != nullptr && height != nullptr && ratio != nullptr) {
+  if (width != nullptr && height != nullptr && ratio != nullptr) {
     image_width = width->valueint;
     image_height = height->valueint;
     aspect_ratio = (double)image_width / image_height;
@@ -182,9 +183,7 @@ auto scene::parse_aperture() -> void {
     aperture = 0.1;
   }
 }
-auto scene::parse_object() -> void {
-
-}
+auto scene::parse_object() -> void {}
 auto scene::parse_background() -> void {
   auto background_raw = cJSON_GetObjectItem(root, "background");
   if (background_raw == nullptr) {
@@ -238,7 +237,7 @@ auto scene::scene_parse(const std::string &json_path) -> bool {
   root = cJSON_Parse(jsonString.c_str());
   parse_scene_id();
   parse_image_name();
-  if(scene_id == -1) {
+  if (scene_id == -1) {
     parse_image_size();
     parse_lookfrom();
     parse_lookat();
@@ -250,13 +249,13 @@ auto scene::scene_parse(const std::string &json_path) -> bool {
     parse_pps();
     parse_threads();
   } else {
-    choose_scene(
-      scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, background);
+    choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat,
+        background);
   }
-  #ifdef DEBUG
-    std::cout << *world << "\n";
-    std::cout << *light << "\n";
-  #endif
+#ifdef DEBUG
+  std::cout << *world << "\n";
+  std::cout << *light << "\n";
+#endif
   vec3d vup(0, 1, 0);
   auto aperture = 0.1;
 
@@ -264,22 +263,22 @@ auto scene::scene_parse(const std::string &json_path) -> bool {
   renderer = std::make_unique<Renderer<camera>>(*world, *light, aspect_ratio, image_width);
   renderer->set_camera(cam);
   renderer->set_photo_name(image_name);
-  renderer->set_samples_per_pixel(1000);
+  renderer->set_samples_per_pixel(400);
   renderer->set_max_depth(10);
   renderer->set_background(background);
-  renderer->set_async_num(1);
-  // renderer->set_async_num(16 * 16);
+  // renderer->set_async_num(1);
+  renderer->set_async_num(16 * 16);
   // 释放内存
   cJSON_Delete(root);
 
   return true;
 }
 auto scene::generate() -> void {
-  #ifdef LOG
+#ifdef LOG
   std::cout << *renderer;
-  #endif
+#endif
   renderer->render();
+  // renderer->render_single();
 }
-
 
 #endif

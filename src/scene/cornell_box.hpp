@@ -119,7 +119,6 @@ auto cornell_smoke(hittable_list &world, hittable_list &light) -> void {
   world.add(std::make_unique<xz_rect>(0, 555, 0, 555, 555, white));
   world.add(std::make_unique<xy_rect>(0, 555, 0, 555, 555, white));
 
-
   auto box1 = std::make_unique<translate>(
       std::make_unique<rotate_y>(
           std::make_unique<box>(point3(0, 0, 0), point3(165, 330, 165), white), 15),

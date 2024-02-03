@@ -103,5 +103,4 @@ void random_checkerANDballs(hittable_list &world, [[maybe_unused]] hittable_list
   // world.add(std::make_unique<sphere>(point3(4, 1, 0), 1.0, material3));
 }
 
-
 #endif

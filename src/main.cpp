@@ -7,8 +7,6 @@
 #include "renderer/Renderer.hpp"
 #include "geometry/hittablelist.hpp"
 
-
-
 auto main(int argc, const char **argv) -> int {
   scene Scene;
 
@@ -17,7 +15,7 @@ auto main(int argc, const char **argv) -> int {
   if (argc >= 2) {
     json_file = std::string(argv[1]);
   }
-  if(!Scene.scene_parse(json_file)) {
+  if (!Scene.scene_parse(json_file)) {
     std::cerr << "can not parse json_file " << json_file << "\n";
   }
   Scene.generate();

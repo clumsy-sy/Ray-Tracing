@@ -61,7 +61,7 @@ public:
   [[nodiscard]] inline auto a() const -> double { return e[3]; }
   // 求和 x + y + z
   [[nodiscard]] auto sum3() const -> double { return e[0] + e[1] + e[2]; }
-  [[nodiscard]] auto raw_sum3(f64x4 e) const -> double { return e[0] + e[1] + e[2]; }
+  [[nodiscard]] static auto raw_sum3(f64x4 e) -> double { return e[0] + e[1] + e[2]; }
   // 乘 r {x * r, y * r, z * r}
   auto operator*(const double &r) const -> vec3d { return e * r; }
   // 除 r {x / r, y / r, z / r}

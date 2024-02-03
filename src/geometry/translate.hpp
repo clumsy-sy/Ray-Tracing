@@ -16,7 +16,7 @@ public:
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
   [[nodiscard]] auto bounding_box() const -> aabb override;
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[trans]ofs=" << offset << " ";
     ptr->print(os, prefix);
   }
@@ -54,7 +54,7 @@ public:
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
   [[nodiscard]] auto bounding_box() const -> aabb override;
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[scale]vec=" << vec << " ";
     ptr->print(os, prefix);
   }
@@ -96,7 +96,7 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
-    auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[rotate_y]ang=" << angle << " ";
     ptr->print(os, prefix);
   }
@@ -107,7 +107,8 @@ public:
   }
 };
 
-rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)), angle(angle) {
+rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -180,7 +181,7 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[rotate_x]ang=" << angle << " ";
     ptr->print(os, prefix);
   }
@@ -191,7 +192,8 @@ public:
   }
 };
 
-rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)), angle(angle) {
+rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -265,7 +267,7 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[rotate_z]ang=" << angle << " ";
     ptr->print(os, prefix);
   }
@@ -276,7 +278,8 @@ public:
   }
 };
 
-rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)), angle(angle) {
+rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);

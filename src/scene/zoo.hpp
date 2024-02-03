@@ -74,7 +74,7 @@ auto cornell_box_bunny_rotate(hittable_list &world, hittable_list &light) -> voi
   auto white = new lambertian(color(.73, .73, .73));
   auto green = new lambertian(color(.12, .45, .15));
   auto wlight = new diffuse_light(color(20, 20, 20));
-//   auto aluminum = new metal(color(0.8, 0.85, 0.88), 0.0);
+  //   auto aluminum = new metal(color(0.8, 0.85, 0.88), 0.0);
 
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 555, green));
   world.add(std::make_unique<yz_rect>(0, 555, 0, 555, 0, red));

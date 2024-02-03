@@ -1,7 +1,7 @@
 /**
  * @file lambertian.hpp
  * @brief 兰伯特模型
- * 
+ *
  */
 #ifndef LAMBERTIAN_HPP
 #define LAMBERTIAN_HPP

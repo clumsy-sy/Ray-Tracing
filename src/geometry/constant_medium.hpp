@@ -27,7 +27,7 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return boundary->bounding_box();
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[const_med]: neg_inv_density = " << neg_inv_density;
     boundary->print(os, prefix);
   }

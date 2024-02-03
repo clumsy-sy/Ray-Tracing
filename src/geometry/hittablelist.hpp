@@ -49,9 +49,15 @@ public:
 
   [[nodiscard]] auto random(const vec3d &o) const -> vec3d override {
     auto int_size = static_cast<int>(objects.size());
+#ifdef DEBUG
+    if (int_size == 0) {
+      std::cerr << "hit_list size = 0, can't random!\n";
+      exit(-1);
+    }
+#endif
     return objects[(uint32_t)random_int(0, int_size - 1)()]->random(o);
   }
-  auto print(std::ostream& os, const std::string& prefix = "") const -> void override {
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
     os << prefix << "[hit_list]: " << objects.size() << "\n";
     auto now_prefix = prefix + "  |-";
     for (auto const &t : objects) {

@@ -1,5 +1,6 @@
 CC = g++
 CFLAGS = -O3 -march=native -std=c++20 -Wall -Wextra
+CDEBUGFLAGS = -march=native -std=c++20 -Wall -Wextra
 
 # SRC = $(wildcard src/*.cpp)
 SRC += $(wildcard src/vector/*.cpp)
@@ -58,7 +59,7 @@ cmrun:
 
 .PHONY : perf
 perf: $(TARGET)
-	nvprof ./$(TARGET)
+	perf ./$(TARGET)
 
 .PHONY : fmt
 fmt:
