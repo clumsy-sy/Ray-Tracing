@@ -51,26 +51,40 @@ private:
   // basic
   auto parse_vec3d(cJSON *) -> std::pair<std::string, vec3d>;
   // parse
-  auto parse_inherit() -> void;
-  auto parse_scene_id() -> void;
-  auto parse_image_name() -> void;
-  auto parse_image_size() -> void;
-  auto parse_lookfrom() -> void;
-  auto parse_lookat() -> void;
-  auto parse_vup() -> void;
-  auto parse_vfov() -> void;
-  auto parse_aperture() -> void;
-  auto parse_texture() -> void;
-  auto parse_material() -> void;
+  auto parse_inherit(cJSON *sub_root) -> void;
+  auto parse_scene_id(cJSON *sub_root) -> void;
+  auto parse_image_name(cJSON *sub_root) -> void;
+  auto parse_image_size(cJSON *sub_root) -> void;
+  auto parse_lookfrom(cJSON *sub_root) -> void;
+  auto parse_lookat(cJSON *sub_root) -> void;
+  auto parse_vup(cJSON *sub_root) -> void;
+  auto parse_vfov(cJSON *sub_root) -> void;
+  auto parse_aperture(cJSON *sub_root) -> void;
+  auto parse_texture(cJSON *sub_root) -> void;
+  auto parse_material(cJSON *sub_root) -> void;
   auto parse_object_once(cJSON *item) -> std::unique_ptr<hittable>;
-  auto parse_object() -> void;
-  auto parse_background() -> void;
-  auto parse_max_depth() -> void;
-  auto parse_pps() -> void;
-  auto parse_threads() -> void;
+  auto parse_object(cJSON *sub_root) -> void;
+  auto parse_background(cJSON *sub_root) -> void;
+  auto parse_max_depth(cJSON *sub_root) -> void;
+  auto parse_pps(cJSON *sub_root) -> void;
+  auto parse_threads(cJSON *sub_root) -> void;
 
 public:
   scene() {
+    scene_id = -1;
+    image_name = "img.bmp";
+    image_width = 600;
+    image_height = 600;
+    aspect_ratio = 1.0;
+    lookfrom = point3(0.0, 0.0, 0.0);
+    lookat = point3(0.0, 0.0, 0.0);
+    vup = point3(0.0, 0.0, 0.0);
+    vfov = 40.0;
+    aperture = 0.1;
+    background = color(0.0, 0.0, 0.0);
+    max_depth = 5;
+    pps = 64;
+    threads = 64;
     world = new hittable_list();
     light = new hittable_list();
   }
@@ -101,49 +115,46 @@ auto scene::parse_vec3d(cJSON *vec) -> std::pair<std::string, vec3d> {
   }
 }
 
-auto scene::parse_inherit() -> void {
-  auto item = cJSON_GetObjectItem(root, "inherit");
+auto scene::parse_inherit(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "inherit");
   if (item != nullptr) {
     if (cJSON_IsArray(item)) {
       int arraySize = cJSON_GetArraySize(item);
       for (int i = 0; i < arraySize; i++) {
         cJSON *element = cJSON_GetArrayItem(item, i);
-        json_set.insert(element->valuestring);
-        scene_parse_sub(element->valuestring);
+        if (json_set.find(element->valuestring) == json_set.end()) {
+          json_set.insert(element->valuestring);
+          scene_parse_sub(element->valuestring);
+        }
       }
     } else {
-      json_set.insert(item->valuestring);
-      scene_parse_sub(item->valuestring);
+      if (json_set.find(item->valuestring) == json_set.end()) {
+        json_set.insert(item->valuestring);
+        scene_parse_sub(item->valuestring);
+      }
     }
   }
 }
 
-auto scene::parse_scene_id() -> void {
-  auto item = cJSON_GetObjectItem(root, "scene_id");
+auto scene::parse_scene_id(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "scene_id");
   if (item != nullptr) {
     scene_id = item->valueint;
 #ifdef LOG
     std::cout << "[scene id]:" << scene_id << "\n";
 #endif
-  } else {
-    scene_id = -1;
   }
 }
-auto scene::parse_image_name() -> void {
-  auto item = cJSON_GetObjectItem(root, "image_name");
+auto scene::parse_image_name(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "image_name");
   if (item != nullptr) {
     image_name = item->valuestring;
-#ifdef LOG
-    std::cout << "[img name]: " << image_name << "\n";
-#endif
-  } else {
-    image_name = "img.bmp";
   }
 }
-auto scene::parse_image_size() -> void {
-  auto width = cJSON_GetObjectItem(root, "width");
-  auto height = cJSON_GetObjectItem(root, "height");
-  auto ratio = cJSON_GetObjectItem(root, "ratio");
+auto scene::parse_image_size(cJSON *sub_root) -> void {
+  auto width = cJSON_GetObjectItem(sub_root, "width");
+  auto height = cJSON_GetObjectItem(sub_root, "height");
+  auto ratio = cJSON_GetObjectItem(sub_root, "ratio");
   if (width != nullptr && height != nullptr && ratio != nullptr) {
     image_width = width->valueint;
     image_height = height->valueint;
@@ -160,18 +171,12 @@ auto scene::parse_image_size() -> void {
     image_height = height->valueint;
     aspect_ratio = ratio->valuedouble;
     image_width = static_cast<uint32_t>(image_height * aspect_ratio);
-  } else {
-    image_width = 600;
-    image_height = 800;
-    aspect_ratio = (double)image_width / image_height;
   }
 }
 
-auto scene::parse_lookfrom() -> void {
-  auto lookfrom_raw = cJSON_GetObjectItem(root, "lookfrom");
-  if (lookfrom_raw == nullptr) {
-    lookfrom = vec3d(0, 0, 0);
-  } else {
+auto scene::parse_lookfrom(cJSON *sub_root) -> void {
+  auto lookfrom_raw = cJSON_GetObjectItem(sub_root, "lookfrom");
+  if (lookfrom_raw) {
     if (cJSON_IsArray(lookfrom_raw)) {
       int arraySize = cJSON_GetArraySize(lookfrom_raw);
       if (arraySize != 3)
@@ -185,11 +190,9 @@ auto scene::parse_lookfrom() -> void {
     }
   }
 }
-auto scene::parse_lookat() -> void {
-  auto lookat_raw = cJSON_GetObjectItem(root, "lookat");
-  if (lookat_raw == nullptr) {
-    lookat = vec3d(0, 0, 0);
-  } else {
+auto scene::parse_lookat(cJSON *sub_root) -> void {
+  auto lookat_raw = cJSON_GetObjectItem(sub_root, "lookat");
+  if (lookat_raw) {
     if (cJSON_IsArray(lookat_raw)) {
       int arraySize = cJSON_GetArraySize(lookat_raw);
       if (arraySize != 3)
@@ -203,11 +206,9 @@ auto scene::parse_lookat() -> void {
     }
   }
 }
-auto scene::parse_vup() -> void {
-  auto vup_raw = cJSON_GetObjectItem(root, "vup");
-  if (vup_raw == nullptr) {
-    vup = vec3d(0, 1, 0);
-  } else {
+auto scene::parse_vup(cJSON *sub_root) -> void {
+  auto vup_raw = cJSON_GetObjectItem(sub_root, "vup");
+  if (vup_raw) {
     if (cJSON_IsArray(vup_raw)) {
       int arraySize = cJSON_GetArraySize(vup_raw);
       if (arraySize != 3)
@@ -221,25 +222,21 @@ auto scene::parse_vup() -> void {
     }
   }
 }
-auto scene::parse_vfov() -> void {
-  auto item = cJSON_GetObjectItem(root, "vfov");
+auto scene::parse_vfov(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "vfov");
   if (item != nullptr) {
     vfov = item->valuedouble;
-  } else {
-    vfov = 40.0;
   }
 }
-auto scene::parse_aperture() -> void {
-  auto item = cJSON_GetObjectItem(root, "aperture");
+auto scene::parse_aperture(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "aperture");
   if (item != nullptr) {
     aperture = item->valuedouble;
-  } else {
-    aperture = 0.1;
   }
 }
 
-auto scene::parse_texture() -> void {
-  auto item = cJSON_GetObjectItem(root, "texture");
+auto scene::parse_texture(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "texture");
   cJSON *child;
   cJSON_ArrayForEach(child, item) {
     auto type = cJSON_GetObjectItem(child, "type");
@@ -297,8 +294,8 @@ auto scene::parse_texture() -> void {
   }
 }
 
-auto scene::parse_material() -> void {
-  auto item = cJSON_GetObjectItem(root, "objects");
+auto scene::parse_material(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "material");
   cJSON *child = nullptr;
   cJSON_ArrayForEach(child, item) {
     auto type = cJSON_GetObjectItem(child, "type");
@@ -397,6 +394,10 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto center_raw = cJSON_GetObjectItem(child, "center");
         auto radius_raw = cJSON_GetObjectItem(child, "radius");
         auto material_raw = cJSON_GetObjectItem(child, "material");
+        if (material_raw == nullptr) {
+          std::cerr << find_it->first << " lack 'material' :  \n";
+          exit(-1);
+        }
         auto result = parse_vec3d(center_raw);
         if (result.first != "") {
           std::cerr << find_it->first << " has error members! " << result.first << "\n";
@@ -404,12 +405,13 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
           auto find_mat = mat_map.find(material_raw->valuestring);
 
           if (find_mat != mat_map.end()) {
-            std::make_unique<sphere>(result.second, radius_raw->valuedouble, find_mat->second);
+            hit = std::make_unique<sphere>(
+                result.second, radius_raw->valuedouble, find_mat->second);
           } else {
-            std::cerr << find_it->first << "can not find mat\n";
+            std::cerr << find_it->first << " can not find mat\n";
           }
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case Tri: {
@@ -419,39 +421,47 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto result0 = parse_vec3d(Q_raw);
         auto result1 = parse_vec3d(u_raw);
         auto result2 = parse_vec3d(v_raw);
-        if (result0.first != "" && result1.first != "" && result2.first != "") {
+        if (result0.first == "" && result1.first == "" && result2.first == "") {
           auto material_raw = cJSON_GetObjectItem(child, "material");
+          if (material_raw == nullptr) {
+            std::cerr << find_it->first << " lack 'material' :  \n";
+            exit(-1);
+          }
           auto find_mat = mat_map.find(material_raw->valuestring);
 
           if (find_mat != mat_map.end()) {
-            std::make_unique<triangle>(
+            hit = std::make_unique<triangle>(
                 result0.second, result1.second, result2.second, find_mat->second);
           } else {
-            std::cerr << find_it->first << "can not find mat\n";
+            std::cerr << find_it->first << " can not find mat\n";
           }
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case Quad: {
-        auto v0_raw = cJSON_GetObjectItem(child, "v0");
-        auto v1_raw = cJSON_GetObjectItem(child, "v1");
-        auto v2_raw = cJSON_GetObjectItem(child, "v2");
+        auto v0_raw = cJSON_GetObjectItem(child, "Q");
+        auto v1_raw = cJSON_GetObjectItem(child, "u");
+        auto v2_raw = cJSON_GetObjectItem(child, "v");
         auto result0 = parse_vec3d(v0_raw);
         auto result1 = parse_vec3d(v1_raw);
         auto result2 = parse_vec3d(v2_raw);
-        if (result0.first != "" && result1.first != "" && result2.first != "") {
+        if (result0.first == "" && result1.first == "" && result2.first == "") {
           auto material_raw = cJSON_GetObjectItem(child, "material");
+          if (material_raw == nullptr) {
+            std::cerr << find_it->first << " lack 'material' :  \n";
+            exit(-1);
+          }
           auto find_mat = mat_map.find(material_raw->valuestring);
 
           if (find_mat != mat_map.end()) {
-            std::make_unique<quad>(
+            hit = std::make_unique<quad>(
                 result0.second, result1.second, result2.second, find_mat->second);
           } else {
-            std::cerr << find_it->first << "can not find mat\n";
+            std::cerr << find_it->first << " can not find mat\n";
           }
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
 
       } break;
@@ -471,7 +481,7 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
           cJSON *obj = cJSON_GetArrayItem(list_raw, i);
           box.add(parse_object_once(obj));
         }
-        std::make_unique<bvh_node>(box);
+        hit = std::make_unique<bvh_node>(box);
       } break;
       case Mesh: {
         auto file_raw = cJSON_GetObjectItem(child, "filename");
@@ -480,13 +490,17 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
           std::string file = file_raw->valuestring;
           double scale = scale_raw->valuedouble;
           auto material_raw = cJSON_GetObjectItem(child, "material");
+          if (material_raw == nullptr) {
+            std::cerr << find_it->first << " lack 'material' :  \n";
+            exit(-1);
+          }
           auto find_mat = mat_map.find(material_raw->valuestring);
 
           if (find_mat != mat_map.end()) {
-            std::make_unique<bvh_node>(
+            hit = std::make_unique<bvh_node>(
                 std::make_unique<MeshTriangle>(file, scale, find_mat->second)->triangles);
           } else {
-            std::cerr << find_it->first << "can not find mat\n";
+            std::cerr << find_it->first << " can not find mat\n";
           }
         }
 
@@ -496,36 +510,40 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto p_max = cJSON_GetObjectItem(child, "p_max");
         auto result0 = parse_vec3d(p_min);
         auto result1 = parse_vec3d(p_max);
-        if (result0.first != "" && result1.first != "") {
+        if (result0.first == "" && result1.first == "") {
           auto material_raw = cJSON_GetObjectItem(child, "material");
+          if (material_raw == nullptr) {
+            std::cerr << find_it->first << " lack 'material' :  \n";
+            exit(-1);
+          }
           auto find_mat = mat_map.find(material_raw->valuestring);
           if (find_mat != mat_map.end()) {
-            std::make_unique<box>(result0.second, result1.second, find_mat->second);
+            hit = std::make_unique<box>(result0.second, result1.second, find_mat->second);
           } else {
-            std::cerr << find_it->first << "can not find mat\n";
+            std::cerr << find_it->first << " can not find mat\n";
           }
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case Trans: {
         auto offset_raw = cJSON_GetObjectItem(child, "offset");
         auto result = parse_vec3d(offset_raw);
         auto obj = cJSON_GetObjectItem(child, "obj");
-        if (result.first != "" && obj) {
-          std::make_unique<translate>(parse_object_once(obj), result.second);
+        if (result.first == "" && obj) {
+          hit = std::make_unique<translate>(parse_object_once(obj), result.second);
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case Scale: {
         auto offset_raw = cJSON_GetObjectItem(child, "offset");
         auto result = parse_vec3d(offset_raw);
         auto obj = cJSON_GetObjectItem(child, "obj");
-        if (result.first != "" && obj) {
-          std::make_unique<scale>(parse_object_once(obj), result.second);
+        if (result.first == "" && obj) {
+          hit = std::make_unique<scale>(parse_object_once(obj), result.second);
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case R_x: {
@@ -533,9 +551,9 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto obj = cJSON_GetObjectItem(child, "obj");
         if (angle_raw && obj) {
 
-          std::make_unique<rotate_x>(parse_object_once(obj), angle_raw->valuedouble);
+          hit = std::make_unique<rotate_x>(parse_object_once(obj), angle_raw->valuedouble);
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case R_y: {
@@ -543,9 +561,9 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto obj = cJSON_GetObjectItem(child, "obj");
         if (angle_raw && obj) {
 
-          std::make_unique<rotate_y>(parse_object_once(obj), angle_raw->valuedouble);
+          hit = std::make_unique<rotate_y>(parse_object_once(obj), angle_raw->valuedouble);
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       case R_z: {
@@ -553,9 +571,9 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
         auto obj = cJSON_GetObjectItem(child, "obj");
         if (angle_raw && obj) {
 
-          std::make_unique<rotate_z>(parse_object_once(obj), angle_raw->valuedouble);
+          hit = std::make_unique<rotate_z>(parse_object_once(obj), angle_raw->valuedouble);
         } else {
-          std::cerr << find_it->first << "can not lack of information\n";
+          std::cerr << find_it->first << " lack of information\n";
         }
       } break;
       }
@@ -564,10 +582,21 @@ auto scene::parse_object_once(cJSON *child) -> std::unique_ptr<hittable> {
   return hit;
 }
 
-auto scene::parse_object() -> void {
-  parse_texture();
-  parse_material();
-  auto item = cJSON_GetObjectItem(root, "objects");
+auto scene::parse_object(cJSON *sub_root) -> void {
+  parse_texture(sub_root);
+  parse_material(sub_root);
+#ifdef DEBUG
+  std::cout << "tex ---------------------\n";
+  for (const auto &i : tex_map) {
+    std::cout << i.first << " " << i.second << "\n";
+  }
+  std::cout << "mat ---------------------\n";
+  for (const auto &i : mat_map) {
+    std::cout << i.first << " " << i.second << "\n";
+  }
+#endif
+
+  auto item = cJSON_GetObjectItem(sub_root, "objects");
   cJSON *child = nullptr;
   cJSON_ArrayForEach(child, item) {
     bool is_light = false;
@@ -586,6 +615,10 @@ auto scene::parse_object() -> void {
           auto center_raw = cJSON_GetObjectItem(child, "center");
           auto radius_raw = cJSON_GetObjectItem(child, "radius");
           auto material_raw = cJSON_GetObjectItem(child, "material");
+          if (material_raw == nullptr) {
+            std::cerr << find_it->first << " lack 'material' :  \n";
+            exit(-1);
+          }
           auto result = parse_vec3d(center_raw);
           if (result.first != "") {
             std::cerr << find_it->first << " has error members! " << result.first << "\n";
@@ -599,10 +632,10 @@ auto scene::parse_object() -> void {
               world->add(std::make_unique<sphere>(
                   result.second, radius_raw->valuedouble, find_mat->second));
             } else if (!is_light) {
-              std::cerr << find_it->first << "can not find mat\n";
+              std::cerr << find_it->first << " can not find mat\n";
             }
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case Tri: {
@@ -612,8 +645,12 @@ auto scene::parse_object() -> void {
           auto result0 = parse_vec3d(Q_raw);
           auto result1 = parse_vec3d(u_raw);
           auto result2 = parse_vec3d(v_raw);
-          if (result0.first != "" && result1.first != "" && result2.first != "") {
+          if (result0.first == "" && result1.first == "" && result2.first == "") {
             auto material_raw = cJSON_GetObjectItem(child, "material");
+            if (material_raw == nullptr) {
+              std::cerr << find_it->first << " lack 'material' :  \n";
+              exit(-1);
+            }
             auto find_mat = mat_map.find(material_raw->valuestring);
             if (is_light) {
               light->add(std::make_unique<triangle>(
@@ -623,21 +660,25 @@ auto scene::parse_object() -> void {
               world->add(std::make_unique<triangle>(
                   result0.second, result1.second, result2.second, find_mat->second));
             } else if (!is_light) {
-              std::cerr << find_it->first << "can not find mat\n";
+              std::cerr << find_it->first << " can not find mat\n";
             }
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case Quad: {
-          auto v0_raw = cJSON_GetObjectItem(child, "v0");
-          auto v1_raw = cJSON_GetObjectItem(child, "v1");
-          auto v2_raw = cJSON_GetObjectItem(child, "v2");
+          auto v0_raw = cJSON_GetObjectItem(child, "Q");
+          auto v1_raw = cJSON_GetObjectItem(child, "u");
+          auto v2_raw = cJSON_GetObjectItem(child, "v");
           auto result0 = parse_vec3d(v0_raw);
           auto result1 = parse_vec3d(v1_raw);
           auto result2 = parse_vec3d(v2_raw);
-          if (result0.first != "" && result1.first != "" && result2.first != "") {
+          if (result0.first == "" && result1.first == "" && result2.first == "") {
             auto material_raw = cJSON_GetObjectItem(child, "material");
+            if (material_raw == nullptr) {
+              std::cerr << find_it->first << " lack 'material' :  \n";
+              exit(-1);
+            }
             auto find_mat = mat_map.find(material_raw->valuestring);
             if (is_light) {
               light->add(std::make_unique<quad>(
@@ -647,10 +688,10 @@ auto scene::parse_object() -> void {
               world->add(std::make_unique<quad>(
                   result0.second, result1.second, result2.second, find_mat->second));
             } else if (!is_light) {
-              std::cerr << find_it->first << "can not find mat\n";
+              std::cerr << find_it->first << " can not find mat\n";
             }
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
 
         } break;
@@ -679,6 +720,10 @@ auto scene::parse_object() -> void {
             std::string file = file_raw->valuestring;
             double scale = scale_raw->valuedouble;
             auto material_raw = cJSON_GetObjectItem(child, "material");
+            if (material_raw == nullptr) {
+              std::cerr << find_it->first << " lack 'material' :  \n";
+              exit(-1);
+            }
             auto find_mat = mat_map.find(material_raw->valuestring);
             if (is_light) {
               light->add(std::make_unique<bvh_node>(
@@ -688,7 +733,7 @@ auto scene::parse_object() -> void {
               world->add(std::make_unique<bvh_node>(
                   std::make_unique<MeshTriangle>(file, scale, find_mat->second)->triangles));
             } else if (!is_light) {
-              std::cerr << find_it->first << "can not find mat\n";
+              std::cerr << find_it->first << " can not find mat\n";
             }
           }
 
@@ -698,8 +743,12 @@ auto scene::parse_object() -> void {
           auto p_max = cJSON_GetObjectItem(child, "p_max");
           auto result0 = parse_vec3d(p_min);
           auto result1 = parse_vec3d(p_max);
-          if (result0.first != "" && result1.first != "") {
+          if (result0.first == "" && result1.first == "") {
             auto material_raw = cJSON_GetObjectItem(child, "material");
+            if (material_raw == nullptr) {
+              std::cerr << find_it->first << " lack 'material' :  \n";
+              exit(-1);
+            }
             auto find_mat = mat_map.find(material_raw->valuestring);
             if (is_light) {
               light->add(std::make_unique<box>(result0.second, result1.second, nullptr));
@@ -708,30 +757,30 @@ auto scene::parse_object() -> void {
               world->add(
                   std::make_unique<box>(result0.second, result1.second, find_mat->second));
             } else if (!is_light) {
-              std::cerr << find_it->first << "can not find mat\n";
+              std::cerr << find_it->first << " can not find mat\n";
             }
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case Trans: {
           auto offset_raw = cJSON_GetObjectItem(child, "offset");
           auto result = parse_vec3d(offset_raw);
           auto obj = cJSON_GetObjectItem(child, "obj");
-          if (result.first != "" && obj) {
+          if (result.first == "" && obj) {
             world->add(std::make_unique<translate>(parse_object_once(obj), result.second));
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case Scale: {
           auto offset_raw = cJSON_GetObjectItem(child, "offset");
           auto result = parse_vec3d(offset_raw);
           auto obj = cJSON_GetObjectItem(child, "obj");
-          if (result.first != "" && obj) {
+          if (result.first == "" && obj) {
             world->add(std::make_unique<scale>(parse_object_once(obj), result.second));
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case R_x: {
@@ -741,7 +790,7 @@ auto scene::parse_object() -> void {
             world->add(
                 std::make_unique<rotate_x>(parse_object_once(obj), angle_raw->valuedouble));
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case R_y: {
@@ -751,7 +800,7 @@ auto scene::parse_object() -> void {
             world->add(
                 std::make_unique<rotate_y>(parse_object_once(obj), angle_raw->valuedouble));
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         case R_z: {
@@ -761,7 +810,7 @@ auto scene::parse_object() -> void {
             world->add(
                 std::make_unique<rotate_z>(parse_object_once(obj), angle_raw->valuedouble));
           } else {
-            std::cerr << find_it->first << "can not lack of information\n";
+            std::cerr << find_it->first << " lack of information\n";
           }
         } break;
         }
@@ -770,11 +819,9 @@ auto scene::parse_object() -> void {
   }
 }
 
-auto scene::parse_background() -> void {
-  auto background_raw = cJSON_GetObjectItem(root, "background");
-  if (background_raw == nullptr) {
-    background = vec3d(0, 0, 0);
-  } else {
+auto scene::parse_background(cJSON *sub_root) -> void {
+  auto background_raw = cJSON_GetObjectItem(sub_root, "background");
+  if (background_raw) {
     if (cJSON_IsArray(background_raw)) {
       int arraySize = cJSON_GetArraySize(background_raw);
       if (arraySize != 3)
@@ -788,28 +835,22 @@ auto scene::parse_background() -> void {
     }
   }
 }
-auto scene::parse_max_depth() -> void {
-  auto item = cJSON_GetObjectItem(root, "max_depth");
+auto scene::parse_max_depth(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "max_depth");
   if (item != nullptr) {
     max_depth = item->valueint;
-  } else {
-    max_depth = 10;
   }
 }
-auto scene::parse_pps() -> void {
-  auto item = cJSON_GetObjectItem(root, "pps");
+auto scene::parse_pps(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "pps");
   if (item != nullptr) {
     pps = item->valueint;
-  } else {
-    pps = 100;
   }
 }
-auto scene::parse_threads() -> void {
-  auto item = cJSON_GetObjectItem(root, "threads");
+auto scene::parse_threads(cJSON *sub_root) -> void {
+  auto item = cJSON_GetObjectItem(sub_root, "threads");
   if (item != nullptr) {
     threads = item->valueint;
-  } else {
-    threads = 16 * 16;
   }
 }
 auto scene::scene_parse_sub(const std::string &json_path) -> bool {
@@ -828,28 +869,32 @@ auto scene::scene_parse_sub(const std::string &json_path) -> bool {
   file.close();
 
   // 解析 JSON 数据
-  root = cJSON_Parse(jsonString.c_str());
-  parse_inherit();
-  parse_scene_id();
-  parse_image_name();
-  parse_vup();
-  parse_vfov();
-  parse_background();
-  parse_max_depth();
-  parse_pps();
-  parse_threads();
+  auto sub = cJSON_Parse(jsonString.c_str());
+  if (sub == nullptr) {
+    std::cerr << " json file can not parse!\n";
+  }
+  parse_inherit(sub);
+  parse_scene_id(sub);
+  parse_image_name(sub);
+  parse_vup(sub);
+  parse_vfov(sub);
+  parse_aperture(sub);
+  parse_background(sub);
+  parse_max_depth(sub);
+  parse_pps(sub);
+  parse_threads(sub);
+
   if (scene_id == -1) {
-    parse_image_size();
-    parse_lookfrom();
-    parse_lookat();
-    parse_aperture();
-    parse_object();
+    parse_image_size(sub);
+    parse_lookfrom(sub);
+    parse_lookat(sub);
+    parse_object(sub);
   } else {
     choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat,
         background);
   }
   // 释放内存
-  cJSON_Delete(root);
+  cJSON_Delete(sub);
   return true;
 }
 auto scene::scene_parse(const std::string &json_path) -> bool {
@@ -863,31 +908,38 @@ auto scene::scene_parse(const std::string &json_path) -> bool {
   // 读取文件内容到字符串
   std::string jsonString(
       (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
   // 关闭文件
   file.close();
 
   // 解析 JSON 数据
   root = cJSON_Parse(jsonString.c_str());
-  parse_inherit();
-  parse_scene_id();
-  parse_image_name();
-  parse_vup();
-  parse_vfov();
-  parse_aperture();
-  parse_background();
-  parse_max_depth();
-  parse_pps();
-  parse_threads();
+  if (root == nullptr) {
+    std::cerr << " json file can not parse!\n";
+  }
+  json_set.insert(json_path);
+  parse_inherit(root);
+  parse_scene_id(root);
+  parse_image_name(root);
+  parse_vup(root);
+  parse_vfov(root);
+  parse_aperture(root);
+  parse_background(root);
+  parse_max_depth(root);
+  parse_pps(root);
+  parse_threads(root);
+
   if (scene_id == -1) {
-    parse_image_size();
-    parse_lookfrom();
-    parse_lookat();
-    parse_object();
+    parse_image_size(root);
+    parse_lookfrom(root);
+    parse_lookat(root);
+    parse_object(root);
   } else {
     choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat,
         background);
   }
+#ifdef LOG
+  std::cout << "[img name]: " << image_name << "\n";
+#endif
 #ifdef DEBUG
   std::cout << *world << "\n";
   std::cout << *light << "\n";

@@ -1,0 +1,95 @@
+{
+  "image_name":"cornell.bmp",
+  "width": 600,
+  "height": 600,
+  "lookfrom": [278, 278, -800],
+  "lookat": [278, 278, 0],
+  "vup": [0.0, 1.0, 0.0],
+  "aperture":0.1,
+  "vfov": 40.0,
+  "max_depth": 5,
+  "pps": 100,
+  "threads": 256,
+  "background": [0.0, 0.0, 0.0],
+  "texture":{
+    "red" : {
+      "type": "Color",
+      "color": [0.65, 0.05, 0.05]
+    },
+    "white":{
+      "type": "Color",
+      "color": [0.73, 0.73, 0.73]
+    },
+    "green" : {
+      "type": "Color",
+      "color": [0.12, 0.45, 0.15]
+    },
+    "wlight" : {
+      "type": "Color",
+      "color": [15, 15, 15]
+    }
+  },
+  "material": {
+    "red":{
+      "type": "Lambertian",
+      "tex": "red"
+    },
+    "white":{
+      "type": "Lambertian",
+      "tex": "white"
+    },
+    "green":{
+      "type": "Lambertian",
+      "tex": "green"
+    },
+    "light":{
+      "type": "Diffuse_light",
+      "tex": "wlight"
+    }
+  },
+  "objects":{
+    "a" : {
+      "type" : "Quad",
+      "Q" :[555, 0, 0],
+      "u" :[0, 0, 555],
+      "v" :[0,555,0],
+      "material" : "green"
+    },
+    "b" : {
+      "type" : "Quad",
+      "Q" :[0, 0, 555],
+      "u" :[0, 0, -555],
+      "v" :[0,555,0],
+      "material" : "red"
+    },
+    "c" : {
+      "type" : "Quad",
+      "Q" :[0, 555, 0],
+      "u" :[555, 0, 0],
+      "v" :[0,0,555],
+      "material" : "white"
+    },
+    "d" : {
+      "type" : "Quad",
+      "Q" :[0, 0, 555],
+      "u" :[555, 0, 0],
+      "v" :[0,0,-555],
+      "material" : "white"
+    },
+    "e" : {
+      "type" : "Quad",
+      "Q" :[555, 0, 555],
+      "u" :[-555, 0, 0],
+      "v" :[0,555,0],
+      "material" : "white"
+    },
+    "light": {
+      "is_light" : true,
+      "type" : "Quad",
+      "Q" :[213, 554, 227],
+      "u" :[130, 0, 0],
+      "v" :[0,0,105],
+      "material" : "light"
+    }
+  }
+}

@@ -9,7 +9,6 @@ using pdd = std::pair<double, double>;
 class triangle : public hittable {
 public:
   /*
-    齐次坐标下三角形的信息
     1. 三个点的坐标 V0，V1，V2，1.0 顺时针
     2. 三个点的颜色信息（R，G，B）
     3. 三个点的材质信息 （U，V）

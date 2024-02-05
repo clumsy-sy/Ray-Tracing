@@ -163,11 +163,12 @@ public:
     color color_from_emission = rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
     if (!rec.mat_ptr->scatter(r, rec, srec))
       return color_from_emission;
-
+    // 得到 brdf pdf
     if (srec.skip_pdf) {
       return srec.attenuation * ray_color(srec.skip_pdf_ray, world, lights, depth - 1);
     }
     std::shared_ptr<pdf> light_ptr = std::make_shared<hittable_pdf>(lights, rec.p);
+    // 混合 pdf 采样
     mixture_pdf p(light_ptr, srec.pdf_ptr);
     ray scattered = ray(rec.p, p.generate());
     auto pdf_val = p.value(scattered.direction());

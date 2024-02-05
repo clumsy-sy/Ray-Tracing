@@ -1,0 +1,35 @@
+{
+    "image_name": "img.bmp",
+    "max_depth":5,
+    "pps": 100,
+    "inherit": "examples/cornell.json",
+    "material":{
+        "glass":{
+            "type": "Dielectric",
+            "ir": 1.5
+        }
+    },
+    "objects":{
+        "box1":{
+            "type": "Trans",
+            "offset":[265,0,295],
+            "obj" : {
+                "type": "R_y",
+                "angle":15,
+                "obj":{
+                    "type": "Box",
+                    "p_min":[0.0, 0.0, 0.0],
+                    "p_max":[165.0, 330.0, 156.0],
+                    "material":"white"
+                }
+            }
+        },
+        "sphere1":{
+            "is_light":true,
+            "type":"Sph",
+            "center":[190,90,190],
+            "radius": 90.0,
+            "material":"glass"
+        }
+    }
+}

@@ -8,13 +8,16 @@ OBJ = $(patsubst %.cpp, %.o, ${SRC})
 
 TARGET := build/RayTracing
 
-.PHONY : test
-test : ${OBJ}
-${OBJ}:%.o:%.cpp
-	$(CC) -c $< -o $@ $(CFLAGS)
+# .PHONY : test
+# test : ${OBJ}
+# ${OBJ}:%.o:%.cpp
+# 	$(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY : pbuild
-pbuild : stb_image_o stb_image_gch stb_image_write_o stb_image_write_gch objLoader vec3dx4 otherHpp cJSON_o cJSON_gch
+pbuild :  stb_image_o stb_image_gch \
+					stb_image_write_o stb_image_write_gch \
+					cJSON_o cJSON_gch \
+					scene_parse objLoader vec3dx4 otherHpp 
 
 stb_image_o: src/external/rtw_stb_image.cpp
 	$(CC) -c src/external/rtw_stb_image.cpp -o build/stb_image.o $(CFLAGS)
@@ -31,6 +34,9 @@ cJSON_o : src/external/cJSON.cpp
 cJSON_gch: src/external/cJSON.h
 	$(CC) src/external/cJSON.h $(CFLAGS)
 
+scene_parse : src/scene/scene_parse.hpp
+	$(CC) -c src/scene/scene_parse.hpp $(CFLAGS)
+
 objLoader: src/external/OBJ_Loader.hpp
 	$(CC) src/external/OBJ_Loader.hpp $(CFLAGS)
 
@@ -44,7 +50,8 @@ otherHpp : src/external/BMP.hpp
 .PHONY : build
 build : 
 	$(CC) -c src/main.cpp -o build/RayTracing.o $(CFLAGS)
-	$(CC) build/RayTracing.o build/stb_image.o build/stb_image_write.o build/cJSON.o -o build/RayTracing
+	$(CC) build/RayTracing.o build/stb_image.o \
+		build/stb_image_write.o build/cJSON.o -o build/RayTracing
 
 
 
@@ -73,6 +80,7 @@ clean:
 .PHONY : buildclean
 buildclean:
 	cd build/ && rm -rf *
+	find src/ -name '*.gch' -type f -delete
 
 .PHONY : convert
 convert:

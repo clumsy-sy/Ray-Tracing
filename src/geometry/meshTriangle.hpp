@@ -30,7 +30,6 @@ public:
     loader.LoadFile(filename);
     assert(loader.LoadedMeshes.size() == 1);
     auto mesh = loader.LoadedMeshes[0];
-    std::cout << mesh.Vertices.size() / 3 << std::endl;
     for (uint32_t i = 0; i < mesh.Vertices.size(); i += 3) {
       std::array<vec3d, 3> face_vertices;
       std::array<pdd, 3> texture;

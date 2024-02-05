@@ -1,0 +1,6 @@
+{
+    "image_name": "img.bmp",
+    "max_depth":5,
+    "pps": 400,
+    "inherit": "examples/box_sph_in_cor.json"
+}
