@@ -8,22 +8,22 @@
 
 |key|value|description|
 |--|--|--|
-|inherit|[file,...]|继承自别的 json 文件|
-|scene_id|int|旧的通用场景|
-|image_name|string|生成的图片名|
-|image_width|int|图像宽度|
-|image_height|int|图像长度|
-|aspect_ratio|double|宽长比|
-|lookfrom|[double, double, double]|摄像机位置|
-|lookat|[double, double, double]|摄像机看向方向|
-|vup|[double, double, double]|摄像机向上方向|
-|vfov|double|摄像机视角|
-|aperture|double|摄像机光圈大小|
-|background|[double, double, double]|摄像机光圈大小|
-|max_depth|int|光线最大弹射次数|
-|pps|int|单像素采样次数|
-|threads|int|启用多线程数|
-|objects|{}|场景描述|
+|inherit|inherit:["file",...]|继承自别的 json 文件|
+|scene_id|scene_id:int|旧的通用场景|
+|image_name|image_name:string|生成的图片名|
+|image_width|width:int|图像宽度|
+|image_height|height:int|图像长度|
+|aspect_ratio|ratio:double|宽长比|
+|lookfrom|lookfrom:[double, double, double]|摄像机位置|
+|lookat|lookat:[double, double, double]|摄像机看向方向|
+|vup|vup:[double, double, double]|摄像机向上方向|
+|vfov|vfov:double|摄像机视角|
+|aperture|aperture:double|摄像机光圈大小|
+|background|background:[double, double, double]|摄像机光圈大小|
+|max_depth|max_depth:int|光线最大弹射次数|
+|pps|pps:int|单像素采样次数|
+|threads|threads:int|启用多线程数|
+|objects|objects:{}|场景描述|
 
 ### texture
 
@@ -72,7 +72,6 @@
 |Isotropic / IS |tex:texture||
 |Metal / MT |color:vec3d, fuzz:double||
 
-
 ```json
 {
   "material":{
@@ -120,6 +119,7 @@
       "v" :[0,555,0],
       "material" : "green"
     },
+  }
 }
 ```
 
@@ -222,6 +222,10 @@
   }
 }
 ```
+效果如下
+![Alt](../images/cornell.bmp)
+
+然后可以添加盒子和球体
 
 ```json
 {
@@ -260,3 +264,5 @@
     }
 }
 ```
+
+![Alt](../images/box_sph_in_cor.bmp)

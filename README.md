@@ -1,7 +1,6 @@
 # Ray-Tracing
 
-一个光线追踪渲染器，内容主要来自[Ray Tracing in One Weekend—The Book Series]
-(https://raytracing.github.io/)
+一个光线追踪渲染器，内容主要来自[Ray Tracing in One Weekend—The Book Series](https://raytracing.github.io/)
 
 ![Alt](images/Mirror.bmp)
 
