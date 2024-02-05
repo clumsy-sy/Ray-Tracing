@@ -5,6 +5,7 @@
 #include "../texture/texture.hpp"
 #include "../texture/solid_color.hpp"
 #include "material.hpp"
+#include <memory>
 
 // 随机方向散射材料
 class isotropic : public material {
@@ -18,11 +19,7 @@ public:
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec,
       scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
-    // std::cout << 3 << std::endl;
-    srec.pdf_ptr = new sphere_pdf();
-    if (srec.pdf_ptr == nullptr) {
-      std::cout << "NULL" << std::endl;
-    }
+    srec.pdf_ptr = std::make_shared<sphere_pdf>();
     srec.skip_pdf = false;
     return true;
   }

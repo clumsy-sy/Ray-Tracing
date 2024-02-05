@@ -1,3 +1,8 @@
+/**
+ * @file material.hpp
+ * @brief 材质基类
+ *
+ */
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
@@ -5,16 +10,24 @@
 #include "pdf.hpp"
 struct hit_record;
 
+/**
+ * @class scatter_record
+ * @brief 记录散射
+ *
+ */
 class scatter_record {
 public:
   color attenuation;
-  pdf *pdf_ptr;
+  std::shared_ptr<pdf> pdf_ptr;
   bool skip_pdf;
   ray skip_pdf_ray;
 };
-/*
-  base class: attenuation(颜色衰减) & scattered（散射光）& emited (光源发射)
-*/
+
+/**
+ * @class material
+ * @brief base class: attenuation(颜色衰减) & scattered（散射光）& emited (光源发射)
+ * 成员函数：散射 scatter、发光 emitted、概率密度函数
+ */
 class material {
 public:
   virtual auto scatter(const ray &r_in, const hit_record &rec, scatter_record &srec) const

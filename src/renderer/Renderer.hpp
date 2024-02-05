@@ -7,6 +7,7 @@
 #include "../camera/camerabase.hpp"
 #include "../geometry/hittablelist.hpp"
 #include "../material/material.hpp"
+#include <memory>
 
 template <class Camera>
 class Renderer {
@@ -23,6 +24,10 @@ public:
   uint32_t max_depth = 10;           // 光线递归深度
   uint32_t async_num = 36;           // 线程数
   color background = color(0, 0, 0); // 背景辐射
+  bool no_light;
+  using RayColorFuncPtr = color (Renderer<Camera>::*)(
+      const ray &, const hittable &, const hittable &, int);
+  RayColorFuncPtr rayColorFuncPtr = &Renderer<Camera>::ray_color_cos;
 
 public:
   Renderer() = default;
@@ -30,6 +35,12 @@ public:
   Renderer(hittable_list &hitlist, hittable_list &lightlist, double ratio, uint32_t width)
       : world(hitlist), light(lightlist), aspect_ratio(ratio), image_width(width) {
     image_height = static_cast<uint32_t>(image_width / aspect_ratio);
+    if (lightlist.objects.empty()) {
+      no_light = true;
+      rayColorFuncPtr = &Renderer<Camera>::ray_color_cos;
+    } else {
+      rayColorFuncPtr = &Renderer<Camera>::ray_color;
+    }
   }
   // clang-format off
   auto set_camera(Camera &c) { cam = c; }
@@ -38,6 +49,7 @@ public:
   auto set_max_depth(uint32_t depth) { max_depth = depth; }
   auto set_async_num(uint32_t num) { async_num = num; }
   auto set_background(const color &c) { background = c;}
+  auto set_no_light(bool flag) { no_light = flag;}
   // clang-format on
   auto render() {
     bmp::bitmap photo(image_width, image_height); // photo
@@ -91,6 +103,24 @@ public:
     // 自己写的 bmp 输出
     // photo.generate(photoname);
   }
+  auto render_single() {
+    bmp::bitmap photo(image_width, image_height); // photo
+    uint32_t cnt = 0;
+    for (uint32_t j = 0; j < image_height; ++j) {
+      for (uint32_t i = 0; i < image_width; ++i) {
+        color pixel_color = simple_random_sampling(i, j);
+        // color pixel_color = sqrt_random_sampling(i, j);
+        photo.set_RGB(i, j, pixel_color, samples_per_pixel);
+      }
+      UpdateProgress(++cnt, image_height - 1);
+    }
+    stbi_flip_vertically_on_write(true);
+    auto data =
+        stbi_write_bmp(photoname.c_str(), image_width, image_height, 3, photo.image.data());
+    if (!data) {
+      std::cerr << "ERROR: Could not load texture image file '" << photoname << "'.\n";
+    }
+  }
   // 普通的采样，在一个像素格内采样 samples_per_pixel 次
   auto simple_random_sampling(uint32_t i, uint32_t j) -> color {
     color res(0, 0, 0);
@@ -98,12 +128,13 @@ public:
       auto u = (i + random_double()) / (image_width - 1);
       auto v = (j + random_double()) / (image_height - 1);
       ray r = cam.get_ray(u, v);
-      // res += ray_color(r, world, max_depth);
-      res += ray_color(r, world, light, max_depth);
+      res += (this->*rayColorFuncPtr)(r, world, light, max_depth);
+      // res += ray_color(r, world, light, max_depth);
     }
     return res;
   }
   auto sqrt_random_sampling(uint32_t i, uint32_t j) -> color {
+    std::cout << "[ " << i << ", " << j << " ]\n";
     thread_local uint32_t N = std::sqrt(samples_per_pixel);
     color res(0, 0, 0);
     for (uint32_t di = 0; di < N; ++di) {
@@ -111,7 +142,7 @@ public:
         auto u = (i + (di + random_double()) / N) / (image_width - 1);
         auto v = (j + (dj + random_double()) / N) / (image_height - 1);
         ray r = cam.get_ray(u, v);
-        // res += ray_color(r, world, max_depth);
+
         res += ray_color(r, world, light, max_depth);
       }
     }
@@ -132,12 +163,12 @@ public:
     color color_from_emission = rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
     if (!rec.mat_ptr->scatter(r, rec, srec))
       return color_from_emission;
-
+    // 得到 brdf pdf
     if (srec.skip_pdf) {
       return srec.attenuation * ray_color(srec.skip_pdf_ray, world, lights, depth - 1);
     }
-
-    auto light_ptr = new hittable_pdf(lights, rec.p);
+    std::shared_ptr<pdf> light_ptr = std::make_shared<hittable_pdf>(lights, rec.p);
+    // 混合 pdf 采样
     mixture_pdf p(light_ptr, srec.pdf_ptr);
     ray scattered = ray(rec.p, p.generate());
     auto pdf_val = p.value(scattered.direction());
@@ -148,6 +179,47 @@ public:
     color color_from_scatter = (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
 
     return color_from_emission + color_from_scatter;
+  }
+  auto ray_color_cos(const ray &r, const hittable &world, const hittable &lights, int depth)
+      -> color {
+    if (depth <= 0)
+      return {0, 0, 0};
+    hit_record rec;
+
+    if (!world.hit(r, interval(0.001, infinity), rec))
+      return background;
+
+    scatter_record srec;
+    color color_from_emission = rec.mat_ptr->emitted(r, rec, rec.u, rec.v, rec.p);
+    if (!rec.mat_ptr->scatter(r, rec, srec))
+      return color_from_emission;
+    if (srec.skip_pdf) {
+      return srec.attenuation * ray_color_cos(srec.skip_pdf_ray, world, lights, depth - 1);
+    }
+    cosine_pdf p(rec.normal);
+    ray scattered = ray(rec.p, p.generate());
+    auto pdf_val = p.value(scattered.direction());
+
+    double scattering_pdf = rec.mat_ptr->scattering_pdf(r, rec, scattered);
+
+    color sample_color = ray_color_cos(scattered, world, lights, depth - 1);
+    color color_from_scatter = (srec.attenuation * scattering_pdf * sample_color) / pdf_val;
+
+    return color_from_emission + color_from_scatter;
+  }
+  friend auto operator<<(std::ostream &os, const Renderer &r) -> std::ostream & {
+    os << "[Renderer] : " << r.photoname << " [width] = " << r.image_width
+       << " [height] = " << r.image_height << "\n";
+    os << "           | [async_num] = " << r.async_num << " [pps] = " << r.samples_per_pixel
+       << " [depth] = " << r.max_depth << "\n";
+    if (r.light.objects.size() != 0 || r.background != color(0, 0, 0)) {
+      os << "           | right source = true ";
+    }
+    if (r.world.objects.size() != 0) {
+      os << " object = exist\n";
+    }
+    os << "--------------------------------------------------\n";
+    return os;
   }
 };
 

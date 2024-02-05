@@ -20,6 +20,13 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return {box_min, box_max};
   }
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[box]{" << box_min << "," << box_max << "}";
+  }
+  friend auto operator<<(std::ostream &os, const box &m) -> std::ostream & {
+    os << "[box]{" << m.box_min << "," << m.box_max << "}";
+    return os;
+  }
 };
 
 box::box(const point3 &p0, const point3 &p1, material *ptr) {

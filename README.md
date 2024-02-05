@@ -1,6 +1,8 @@
 # Ray-Tracing
 
-一个光线追踪渲染器，内容主要来自[Ray Tracing in One Weekend—The Book Series](https://raytracing.github.io/)
+一个光线追踪渲染器，内容主要来自[Ray Tracing in One Weekend—The Book Series]
+(https://raytracing.github.io/)
+
 ![Alt](images/Mirror.bmp)
 
 ## 编译运行
@@ -14,12 +16,13 @@
 **预编译 && 编译**
 ```sh
 # 预编译支持多线程编译 -j[线程数]
-make pbuild -j8 && make build 
+make pbuild -j12 && make build 
 ```
 
 **运行**
 ```sh
-make run [图片名]
+$ make run
+$ ./build/RayRracing [examples/XXX.json]
 ```
 
 推荐预编译后，编译运行并且记录运行时间（有些场景需要运行很久）
@@ -43,7 +46,7 @@ make
 
 ### 多线程
 
-由于整个项目是在 CPU 上运行的，所以在应对像素点很多的情况时，会运行的非常慢，所以采用有多线程，可以基本上使得运行时间 / 核心数。代码详见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/src/renderer/Renderer.hpp#L75), 由于 `shared_ptr` 会导致多线程运行时频繁的加锁，所以新版中改为 `unique_ptr`。
+由于整个项目是在 CPU 上运行的，所以在应对像素点很多的情况时，会运行的非常慢，所以采用多线程，可以基本上使得运行时间 / 核心数。代码详见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/src/renderer/Renderer.hpp#L75), 由于 `shared_ptr` 会导致多线程运行时频繁的加锁，所以新版中改为 `unique_ptr`。
 
 ### SIMD!!!
 
@@ -73,17 +76,60 @@ make
 - [ ] SAH 算法的实现，现在的 BVH 并不够智能与高效，需要更加优秀的划分策略。
 - [ ] 与光子映射结合
 - [ ] 曲面细分
-- [ ] 场景信息由 Json 表示
+- [x] 场景信息由 Json 表示(进行中)
 
 ## 图片展示
 
-![Alt](images/zooImg.bmp)
+![Alt](images/sphere.bmp)
 
 **上图信息** 
 > CPU： i9-13980HX  
-> 图片大小：800 * 600  
+> 图片大小：600 * 600  
 > 单像素采样数：40000  
-> 递归深度： 10  
-> 运行时间：13:52.59  
+> 递归深度： 20  
+> 运行时间：16:08.39  
 
 ![Alt](images/checker_balls_400.bmp)
+
+
+## json 格式描述
+
+更多见[这里](https://github.com/clumsy-sy/Ray-Tracing/blob/main/examples/json.md)
+
+```json
+{
+    "image_name": "img.bmp",
+    "max_depth":5,
+    "pps": 100,
+    "inherit": "examples/cornell.json",
+    "material":{
+        "glass":{
+            "type": "Dielectric",
+            "ir": 1.5
+        }
+    },
+    "objects":{
+        "box1":{
+            "type": "Trans",
+            "offset":[265,0,295],
+            "obj" : {
+                "type": "R_y",
+                "angle":15,
+                "obj":{
+                    "type": "Box",
+                    "p_min":[0.0, 0.0, 0.0],
+                    "p_max":[165.0, 330.0, 156.0],
+                    "material":"white"
+                }
+            }
+        },
+        "sphere1":{
+            "is_light":true,
+            "type":"Sph",
+            "center":[190,90,190],
+            "radius": 90.0,
+            "material":"glass"
+        }
+    }
+}
+```

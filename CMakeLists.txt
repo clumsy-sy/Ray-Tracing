@@ -12,8 +12,8 @@ aux_source_directory(src/scene SCENE)
 aux_source_directory(src/texture TEXTURE)
 aux_source_directory(src/vector VECTOR)
 
-add_executable(RayTracing src/main.cpp src/global.hpp ${CAMERA} ${EXTERNAL} ${GEOMETRY} ${RENDERER} ${SCENE} ${TEXTURE} ${VECTOR})
+add_executable(RayTracing src/main.cpp src/global.hpp ${SCENE} ${CAMERA} ${EXTERNAL} ${GEOMETRY} ${RENDERER}  ${TEXTURE} ${VECTOR})
 
-# target_compile_options(RayTracing PUBLIC -Wall -Wextra -pedantic -Wshadow -Wreturn-type -fsanitize=undefined)
-target_compile_options(RayTracing PUBLIC -O3 -march=native -std=c++20 -Wall -Wextra)
 
+target_compile_options(RayTracing PUBLIC -march=native -Wall -Wextra)
+#target_compile_options(RayTracing PUBLIC -O3 -march=native -std=c++20 -Wall -Wextra)

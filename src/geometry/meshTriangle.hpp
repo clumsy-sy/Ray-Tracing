@@ -30,7 +30,6 @@ public:
     loader.LoadFile(filename);
     assert(loader.LoadedMeshes.size() == 1);
     auto mesh = loader.LoadedMeshes[0];
-    std::cout << mesh.Vertices.size() / 3 << std::endl;
     for (uint32_t i = 0; i < mesh.Vertices.size(); i += 3) {
       std::array<vec3d, 3> face_vertices;
       std::array<pdd, 3> texture;
@@ -49,6 +48,14 @@ public:
   }
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
   [[nodiscard]] auto bounding_box() const -> aabb override;
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix;
+    auto now_prefix = prefix + "|-";
+    for (auto const &t : triangles.objects) {
+      t->print(os, now_prefix);
+      os << "\n";
+    }
+  }
   friend auto operator<<(std::ostream &os, const MeshTriangle &m) -> std::ostream & {
     for (auto const &t : m.triangles.objects) {
       os << t << "\n";

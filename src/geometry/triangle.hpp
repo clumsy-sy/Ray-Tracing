@@ -9,7 +9,6 @@ using pdd = std::pair<double, double>;
 class triangle : public hittable {
 public:
   /*
-    齐次坐标下三角形的信息
     1. 三个点的坐标 V0，V1，V2，1.0 顺时针
     2. 三个点的颜色信息（R，G，B）
     3. 三个点的材质信息 （U，V）
@@ -53,8 +52,15 @@ public:
     return {ix, iy, iz};
   }
   [[nodiscard]] auto pdf_value(const point3 &origin, const vec3d &v) const -> double override;
+  [[nodiscard]] auto random(const point3 &origin) const -> vec3d override {
+    auto p = v0 + (random_double() * e1) + (random_double() * e2);
+    return p - origin;
+  }
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[Tri]{" << v0 << "," << v1 << "," << v2 << "}";
+  }
   friend auto operator<<(std::ostream &os, const triangle &t) -> std::ostream & {
-    return os << "v0 : " << t.v0 << ", v1 " << t.v1 << ", v2 " << t.v2;
+    return os << "[Tri]{" << t.v0 << "," << t.v1 << "," << t.v2 << "}";
   }
 };
 auto triangle::setVector(std::array<vec3d, 3> &vec) -> void {
@@ -79,8 +85,8 @@ inline auto triangle::interpolate(double &u, double &v, vec3d &Barycentr, double
 
 // Möller Trumbore Algorithm 同时求 光线与三角形的交与 u，v
 auto triangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
-  auto s = r.orig - v0;
-  auto s1 = cross(r.dir, e2);
+  auto s = r.origin() - v0;
+  auto s1 = cross(r.direction(), e2);
   auto s2 = cross(s, e1);
   auto D = dot(s1, e1);
   if (std::abs(D) < esp)
@@ -88,7 +94,7 @@ auto triangle::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
   D = 1 / D;
   auto t = dot(s2, e2) * D;
   auto u = dot(s1, s) * D;
-  auto v = dot(s2, r.dir) * D;
+  auto v = dot(s2, r.direction()) * D;
 
   if (t < ray_t.min || t > ray_t.max || u < esp || v < esp || 1 - u - v < esp)
     return false;
@@ -107,7 +113,6 @@ auto triangle::bounding_box() const -> aabb {
 }
 
 [[nodiscard]] auto triangle::pdf_value(const point3 &origin, const vec3d &v) const -> double {
-  printf("tri");
   hit_record rec;
   if (!this->hit(ray(origin, v), interval(0.001, infinity), rec))
     return 0;

@@ -51,18 +51,18 @@ public:
 
 class mixture_pdf : public pdf {
 public:
-  std::array<pdf *, 2> p;
+  std::array<std::shared_ptr<pdf>, 2> p;
 
 public:
-  mixture_pdf(pdf *p0, pdf *p1) {
+  mixture_pdf(std::shared_ptr<pdf> &p0, std::shared_ptr<pdf> &p1) {
     p[0] = p0;
     p[1] = p1;
   }
-  ~mixture_pdf() override {
-    for (auto &i : p) {
-      delete i;
-    }
-  }
+  // ~mixture_pdf() override {
+  //   for (auto &i : p) {
+  //     delete i;
+  //   }
+  // }
 
   [[nodiscard]] auto value(const vec3d &direction) const -> double override {
     return 0.5 * p[0]->value(direction) + 0.5 * p[1]->value(direction);

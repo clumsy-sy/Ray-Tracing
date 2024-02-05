@@ -16,6 +16,15 @@ public:
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
   [[nodiscard]] auto bounding_box() const -> aabb override;
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[trans]ofs=" << offset << " ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const translate &t) -> std::ostream & {
+    os << "[trans]ofs=" << t.offset << " ";
+    t.ptr->print(os);
+    return os;
+  }
 };
 
 auto translate::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
@@ -45,6 +54,15 @@ public:
   auto hit(const ray &r, interval ray_t, hit_record &rec) const -> bool override;
 
   [[nodiscard]] auto bounding_box() const -> aabb override;
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[scale]vec=" << vec << " ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const scale &t) -> std::ostream & {
+    os << "[scale]vec=" << t.vec << " ";
+    t.ptr->print(os);
+    return os;
+  }
 };
 
 auto scale::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool {
@@ -65,6 +83,7 @@ auto scale::bounding_box() const -> aabb {
 class rotate_y : public hittable {
 public:
   std::unique_ptr<hittable> ptr;
+  double angle;
   double sin_theta;
   double cos_theta;
   aabb bbox;
@@ -77,9 +96,19 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[rotate_y]ang=" << angle << " ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const rotate_y &t) -> std::ostream & {
+    os << "[rotate_y]ang=" << t.angle << " ";
+    t.ptr->print(os);
+    return os;
+  }
 };
 
-rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_y::rotate_y(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -139,6 +168,7 @@ auto rotate_y::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 class rotate_x : public hittable {
 public:
   std::unique_ptr<hittable> ptr;
+  double angle;
   double sin_theta;
   double cos_theta;
   aabb bbox;
@@ -151,9 +181,19 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[rotate_x]ang=" << angle << " ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const rotate_x &t) -> std::ostream & {
+    os << "[rotate_x]ang=" << t.angle << " ";
+    t.ptr->print(os);
+    return os;
+  }
 };
 
-rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_x::rotate_x(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
@@ -214,6 +254,7 @@ auto rotate_x::hit(const ray &r, interval ray_t, hit_record &rec) const -> bool 
 class rotate_z : public hittable {
 public:
   std::unique_ptr<hittable> ptr;
+  double angle;
   double sin_theta;
   double cos_theta;
   aabb bbox;
@@ -226,9 +267,19 @@ public:
   [[nodiscard]] auto bounding_box() const -> aabb override {
     return bbox;
   }
+  auto print(std::ostream &os, const std::string &prefix = "") const -> void override {
+    os << prefix << "[rotate_z]ang=" << angle << " ";
+    ptr->print(os, prefix);
+  }
+  friend auto operator<<(std::ostream &os, const rotate_z &t) -> std::ostream & {
+    os << "[rotate_z]ang=" << t.angle << " ";
+    t.ptr->print(os);
+    return os;
+  }
 };
 
-rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle) : ptr(std::move(p)) {
+rotate_z::rotate_z(std::unique_ptr<hittable> p, double angle)
+    : ptr(std::move(p)), angle(angle) {
   auto radians = degrees_to_radians(angle);
   sin_theta = sin(radians);
   cos_theta = cos(radians);
