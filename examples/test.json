@@ -1,4 +1,87 @@
 {
-    "scene_id":4,
-    "image_name":"img.bmp"
+    "scene_id": 1,
+    "image_name": "img.bmp",
+    "pps": 100,
+    "texture": {
+        "t1": {
+            "type": "Color",
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "t2": {
+            "type": "Color",
+            "color": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    },
+    "material": {
+        "l1": {
+            "type": "Lambertian",
+            "tex": "t1"
+        },
+        "d1": {
+            "type": "Dielectric",
+            "ir": 1.5
+        },
+        "m1": {
+            "type": "Metal",
+            "color": [
+                1.0,
+                0.5,
+                0.2
+            ],
+            "fuzz": 0.1
+        }
+    },
+    "objects": {
+        "sphere1": {
+            "type": "sphere",
+            "center": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "radius": 1.0,
+            "material": "l1"
+        },
+        "sphere2": {
+            "type": "sphere",
+            "center": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "radius": 2.0,
+            "is_light":true
+        },
+        "trans":{
+            "type" : "trans",
+            "offest":[1.0, 1.0, 1.0],
+            "k" : {
+                "sphere2": {
+                    "type": "sphere",
+                    "center": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "radius": 2.0
+                }
+            }
+        },
+        "list" :{
+            "type":"List",
+            "list":[
+                {
+                    "12": 22
+                }
+            ]
+        }
+    }
 }

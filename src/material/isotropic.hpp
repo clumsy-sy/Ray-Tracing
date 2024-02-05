@@ -19,11 +19,7 @@ public:
   auto scatter([[maybe_unused]] const ray &r_in, const hit_record &rec,
       scatter_record &srec) const -> bool override {
     srec.attenuation = albedo->value(rec.u, rec.v, rec.p);
-    if(!srec.pdf_ptr)
-      srec.pdf_ptr = std::make_shared<sphere_pdf>();
-    if (srec.pdf_ptr == nullptr) {
-      std::cout << "NULL" << std::endl;
-    }
+    srec.pdf_ptr = std::make_shared<sphere_pdf>();
     srec.skip_pdf = false;
     return true;
   }

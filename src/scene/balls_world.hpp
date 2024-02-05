@@ -91,16 +91,16 @@ void random_checkerANDballs(hittable_list &world, [[maybe_unused]] hittable_list
     }
   }
 
-  // world.add(std::make_unique<bvh_node>(box));
+  world.add(std::make_unique<bvh_node>(box));
 
-  // auto material1 = new dielectric(1.5);
-  // world.add(std::make_unique<sphere>(point3(0, 1, 0), 1.0, material1));
+  auto material1 = new dielectric(1.5);
+  world.add(std::make_unique<sphere>(point3(0, 1, 0), 1.0, material1));
 
-  // auto material2 = new lambertian(color(0.4, 0.2, 0.1));
-  // world.add(std::make_unique<sphere>(point3(-4, 1, 0), 1.0, material2));
+  auto material2 = new lambertian(color(0.4, 0.2, 0.1));
+  world.add(std::make_unique<sphere>(point3(-4, 1, 0), 1.0, material2));
 
-  // auto material3 = new metal(color(0.7, 0.6, 0.5), 0.0);
-  // world.add(std::make_unique<sphere>(point3(4, 1, 0), 1.0, material3));
+  auto material3 = new metal(color(0.7, 0.6, 0.5), 0.0);
+  world.add(std::make_unique<sphere>(point3(4, 1, 0), 1.0, material3));
 }
 
 #endif
