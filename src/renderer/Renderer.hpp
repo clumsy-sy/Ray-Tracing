@@ -59,11 +59,14 @@ public:
     // 开始渲染和显示进度
     UpdateProgress(cnt, image_height - 1);
     // 各像素片渲染函数，
+
+    // auto possionsamples = possionSamplesInit(true);
     auto action = [&](uint32_t jl, uint32_t jr) -> void {
       for (uint32_t j = jl; j < jr; ++j) {
         for (uint32_t i = 0; i < image_width; ++i) {
           color pixel_color = simple_random_sampling(i, j);
           // color pixel_color = sqrt_random_sampling(i, j);
+          // color pixel_color = poissonSamples(i, j, possionsamples);
           photo.set_RGB(i, j, pixel_color, samples_per_pixel);
         }
         cout_mutex.lock();
@@ -145,6 +148,32 @@ public:
 
         res += ray_color(r, world, light, max_depth);
       }
+    }
+    return res;
+  }
+  auto possionSamplesInit(bool flag) -> std::vector<std::pair<double, double>>& {
+    static std::vector<std::pair<double, double>> samples;
+    if(flag) {
+      static bool initPoisson = false;
+      if(!initPoisson) {
+        double threshold = 1.0 / std::sqrt(samples_per_pixel) / std::sqrt(2);
+        samples = fastPoissonDiscSampling(1.0, 1.0, threshold);
+        printf("threshold = %lf ;samples: %lu\n", threshold, samples.size());
+        // for(auto p : samples) {
+        //   printf("(%lf, %lf)\n", p.first, p.second);
+        // }
+        initPoisson = true;
+      }
+    }
+    return samples;
+  }
+  auto poissonSamples(uint32_t i, uint32_t j, std::vector<std::pair<double, double>> &samples) -> color {
+    color res(0, 0, 0);
+    for (auto p : samples) {
+      auto u = (i + p.first) / (image_width - 1);
+      auto v = (j + p.second) / (image_height - 1);
+      ray r = cam.get_ray(u, v);
+      res += (this->*rayColorFuncPtr)(r, world, light, max_depth);
     }
     return res;
   }

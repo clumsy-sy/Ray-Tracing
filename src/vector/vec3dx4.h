@@ -34,7 +34,10 @@ public:
   vec3d() : e() {}
   vec3d(const vec3d &) = default;
   vec3d(vec3d &&) = default;
-  auto operator=(const vec3d &v) -> vec3d & = default;
+  auto operator=(const vec3d &v) -> vec3d & {
+    e = v.e;
+    return *this;
+  };
   auto operator=(vec3d &&v) noexcept -> vec3d & {
     e = v.e;
     return *this;
@@ -107,8 +110,12 @@ public:
     return *this;
   }
   // 变为单位向量
-  inline auto unit_vector() -> vec3d { return e /= length(); }
-  
+  inline auto unit_vector() -> vec3d {
+    // if (length() == dZero)
+    //   return {1, 1, 1, 0};
+    return e /= length();
+  }
+
   auto operator==(const vec3d &other) -> bool {
     auto result = _mm256_cmp_pd(e, other.e, _CMP_EQ_OQ);
     int mask = _mm256_movemask_pd(result);
@@ -116,8 +123,9 @@ public:
   }
   // 输出{x, y, z}
   friend auto operator<<(std::ostream &os, const vec3d &v) -> std::ostream & {
-    return os << "(" << std::fixed << std::setprecision(4) << v.x() << ", " << std::fixed << std::setprecision(4) << v.y()
-              << ", " << std::fixed << std::setprecision(4) << v.z() << ")";
+    return os << "(" << std::fixed << std::setprecision(4) << v.x() << ", " << std::fixed
+              << std::setprecision(4) << v.y() << ", " << std::fixed << std::setprecision(4)
+              << v.z() << ")";
   }
 };
 
@@ -127,8 +135,8 @@ inline auto dot(const vec3d &a, const vec3d &b) -> double {
 }
 // 叉乘
 inline auto cross(const vec3d &a, const vec3d &b) -> vec3d {
-  return {a.y() * b.z() - a.z() * b.y(), a.z() * b.x() - a.x() * b.z(),
-      a.x() * b.y() - a.y() * b.x()};
+  // std::cout << "cross" << a << "  " << b << "\n";
+  return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
 }
 // 变为单位向量
 inline auto unit_vector(vec3d v) -> vec3d {
