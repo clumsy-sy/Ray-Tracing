@@ -83,13 +83,14 @@ std::map<std::string, int> texture_map = {
     {"Color", Color}, {"Checker", Checker}, {"Image", Image}, {"Noise", Noise}};
 
 inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &light,
-    double &aspect_ratio, uint32_t &image_width, double &vfov, point3 &lookfrom, point3 &lookat,
+    double &aspect_ratio, uint32_t &image_width, double &vfov, point3 &lookfrom, point3 &lookat, point3 &vup,
     color &background) -> void {
 
   switch (opt) {
   case 1:
     lookfrom = point3(13, 3, 3);
     lookat = point3(0, 0, 0);
+    vup = point3(0, 1, 0);
     background = color(0.70, 0.80, 1.00);
     image_width = 1200;
     aspect_ratio = 3.0 / 2.0;
@@ -99,6 +100,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
   case 2:
     lookfrom = point3(13, 3, 3);
     lookat = point3(0, 0, 0);
+    vup = point3(0, 1, 0);
     background = color(0.70, 0.80, 1.00);
     image_width = 1200;
     aspect_ratio = 3.0 / 2.0;
@@ -111,6 +113,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     cornell_box_new(world, light);
     break;
   case 4:
@@ -120,6 +123,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     cornell_box(world, light);
     break;
   case 5:
@@ -129,6 +133,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     cornell_box_rotate(world, light);
     break;
   case 6:
@@ -137,6 +142,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     vfov = 40.0;
     cornell_smoke(world, light);
     break;
@@ -146,6 +152,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(478, 278, -600);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     vfov = 40.0;
     total_texture(world, light);
     break;
@@ -156,6 +163,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     cornell_box_bunny_rotate(world, light);
     break;
   case 9:
@@ -165,6 +173,7 @@ inline auto choose_scene(uint32_t opt, hittable_list &world, hittable_list &ligh
     background = color(0, 0, 0);
     lookfrom = point3(278, 278, -800);
     lookat = point3(278, 278, 0);
+    vup = point3(0, 1, 0);
     test_scene(world, light);
     break;
   default:

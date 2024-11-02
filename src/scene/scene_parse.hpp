@@ -890,7 +890,7 @@ auto scene::scene_parse_sub(const std::string &json_path) -> bool {
     parse_lookat(sub);
     parse_object(sub);
   } else {
-    choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat,
+    choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, vup,
         background);
   }
   // 释放内存
@@ -934,7 +934,7 @@ auto scene::scene_parse(const std::string &json_path) -> bool {
     parse_lookat(root);
     parse_object(root);
   } else {
-    choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat,
+    choose_scene(scene_id, *world, *light, aspect_ratio, image_width, vfov, lookfrom, lookat, vup,
         background);
   }
 #ifdef LOG
